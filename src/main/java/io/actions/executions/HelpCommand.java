@@ -1,40 +1,34 @@
 package io.actions.executions;
 
 import global.App;
-import io.actions.memes.Meme;
 import io.actions.memes.DrowningMeme;
-import io.structure.MemeBody;
-import io.structure.TextBody;
-
-import java.awt.*;
 
 public class HelpCommand extends Command {
 
-    Meme helpMeme = new DrowningMeme();
+    DrowningMeme dm1 = new DrowningMeme();
     public HelpCommand(){
         super();
+        getBody().setName("Help");
         getBody().getIn().add("help");
-        helpMeme = new DrowningMeme();
-        MemeBody mBody = helpMeme.getFirstMeme();
 
 
-        TextBody t1 = new TextBody("Life Guard",new Point(430,130), App.BOT_NAME);
-        TextBody t2 = new TextBody("Trophy",new Point(259,102),"Making Dank Memes");
-        TextBody t3 = new TextBody("Drowning",new Point(35,337),"#auth");
-        mBody.getTextBoxes().add(t1);
-        mBody.getTextBoxes().add(t2);
-        mBody.getTextBoxes().add(t3);
+        dm1.addText1(App.BOT_NAME);
+        dm1.addText2("Making Dank Memes");
+        dm1.addText2("Literally\n Anything Else");
+        dm1.addText3("#auth asking for help");
+        dm1.addText3("Actually Developing\n a Help Page");
 
     }
     @Override
     public boolean execute(boolean response) {
-        helpMeme.execute();
+        dm1.execute();
         return true;
     }
 
     @Override
     public boolean build() {
-        return helpMeme.build();
+        dm1.setEvent(getEvent());
+        return dm1.build();
     }
 
 //    @Override

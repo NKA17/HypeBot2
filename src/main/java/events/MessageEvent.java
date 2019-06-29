@@ -55,6 +55,8 @@ public class MessageEvent extends ListenerAdapter {
             AbstractMessageReceivedAction chosen = chooseEvent(valid);
 
             //attempt to build
+            chosen.setEvent(event);
+            chosen.setContent(event.getMessage().getContentRaw());
             boolean buildSuccess = chosen.build();
             if (!buildSuccess)
                 return;

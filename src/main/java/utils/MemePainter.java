@@ -1,5 +1,7 @@
 package utils;
 
+import global.App;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
@@ -9,6 +11,9 @@ import java.awt.image.BufferedImage;
 public class MemePainter {
 
 
+    public static void drawCenteredString(BufferedImage img, String text, Point p, Font font) {
+        drawCenteredString(img,text,p,font, App.FONT_BORDER_THICKNESS);
+    }
     public static void drawCenteredString(BufferedImage img, String text, Point p, Font font, int thickness){
         Font temp = font;
         Font f = resizeFont(img,font,text);
@@ -22,6 +27,7 @@ public class MemePainter {
     public static void drawCenteredString(Graphics g, String text, Point p, Font font,int thickness) {
         // Get the FontMetrics
         Font temp = font;
+        g.setFont(font);
         FontMetrics metrics = g.getFontMetrics(font);
         // Determine the X coordinate for the text
         int x = p.x - (metrics.stringWidth(text) / 2);
@@ -54,26 +60,20 @@ public class MemePainter {
         g.drawString(text, x, y);
     }
 
+    /**
+     * Returns a smaller sized version of the Font provided. Small enough to fit all text on screen.
+     * @param img
+     * @param f
+     * @param text
+     * @return
+     */
     public static Font resizeFont(BufferedImage img,Font f,String text){
-//        System.out.println(img.getWidth()+","+img.getGraphics().getFontMetrics().stringWidth(text));
-//
-//        int width = img.getGraphics().getFontMetrics().stringWidth(text);
-//        while (width >= img.getWidth()-10){
-//            f = new Font(f.getName(),f.getStyle(),f.getSize()-5);
-//            img.getGraphics().setFont(f);
-//            width = img.getGraphics().getFontMetrics().stringWidth(text);
-//            System.out.println(f.getSize());
-//        }
-//        return f;
         AffineTransform affinetransform = new AffineTransform();
         FontRenderContext frc = new FontRenderContext(affinetransform,true,true);
         int textwidth = (int)(f.getStringBounds(text, frc).getWidth());
         while (textwidth >= img.getWidth()-10){
             f = new Font(f.getName(),f.getStyle(),f.getSize()-5);
             textwidth = (int)(f.getStringBounds(text, frc).getWidth());
-//            img.getGraphics().setFont(f);
-//            width = img.getGraphics().getFontMetrics().stringWidth(text);
-//            System.out.println(f.getSize());
         }
 
         return f;

@@ -16,6 +16,7 @@ public class CheckInCommand extends Command {
     public CheckInCommand() {
         super();
         Body body = getBody();
+        getBody().setName("CheckIn");
         body.getIn().add("check in|you there|(^| )u there|^hypebot(\\?|!)?$");
         body.setOut(testResponses);
         body.setName("CheckInCommand");

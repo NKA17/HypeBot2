@@ -13,7 +13,8 @@ public abstract class Command extends AbstractMessageReceivedAction{
     public Command(){
         Body body = new Body();
         setBody(body);
-        getBody().getAttributes().add(Attributes.EXECUTE);
+        body.getAttributes().add(Attributes.EXECUTE);
+        body.getAttributes().add(Attributes.VANILLA);
     }
 
     @Override
@@ -29,8 +30,8 @@ public abstract class Command extends AbstractMessageReceivedAction{
 
             for(String regex : getBody().getIn()){
                 Matcher matcher = Pattern.compile("(?i)"+regex).matcher(getContent());
-                setMatcher(matcher);
                 if(matcher.find()){
+                    setMatcher(matcher);
                     return true;
                 }
             }

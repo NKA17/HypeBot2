@@ -19,7 +19,7 @@ public class App {
     public static final String RESOURCES_PATH = "C:\\Users\\Nate\\IdeaProjects\\HypeBot2\\src\\main\\resources\\";
     public static MessageEvent messageEvent;
     public static Font FONT = new Font("Arial Black", Font.BOLD, 20);
-    public static int FONT_BORDER_THICKNESS = 4;
+    public static int FONT_BORDER_THICKNESS = 2;
 
     public static void main(String[] args) throws Exception{
         JDABuilder jda = new JDABuilder("NTkwMzU2MDE3OTc2NTczOTYw.XQhJUw.4cwTnNLXz_fZpIVBmHax6BdPu0k");
@@ -42,4 +42,10 @@ public class App {
     public static void setFontName(String name){
         FONT = new Font(name,FONT.getStyle(),FONT.getSize());
     }
+
+    public static void setFontStyle(int style){ FONT = new Font(FONT.getName(),style,FONT.getSize());}
+
+    public static int getFontStyle(){return FONT.getStyle();}
+    public static int getFontSize(){return FONT.getSize();}
+    public static String getFontName(){ return FONT.getName();}
 }

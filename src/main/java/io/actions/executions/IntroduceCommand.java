@@ -4,6 +4,12 @@ import global.App;
 import net.dv8tion.jda.core.EmbedBuilder;
 
 public class IntroduceCommand extends Command {
+
+    public IntroduceCommand(){
+
+        getBody().setName("Granny");
+        getBody().getIn().add("introduce yourself");
+    }
     @Override
     public boolean execute(boolean response) {
 

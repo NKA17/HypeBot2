@@ -60,6 +60,7 @@ public class MessageSender {
             }
         }
     }
+
     /**
      * Sends the embed as a response to the TextChannel
      * @param embed

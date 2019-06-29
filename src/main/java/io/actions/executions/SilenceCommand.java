@@ -8,6 +8,7 @@ public class SilenceCommand extends Command {
     public SilenceCommand() {
         super();
         Body body = getBody();
+        getBody().setName("Silence");
         body.getIn().add("chill|relax|sleep|silent|silence|quiet");
         body.setOut(MessageUtils.affirmative);
         body.setName("SilenceCommand");

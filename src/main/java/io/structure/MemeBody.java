@@ -2,6 +2,7 @@ package io.structure;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.URL;
 import java.nio.Buffer;
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ public class MemeBody {
 
     public boolean openImage(){
         try{
-            setImage(ImageIO.read(new URL(getImageUrl())));
+            setImage(ImageIO.read(new File(getImageUrl()).toURI().toURL()));
             return true;
         }catch (Exception e){
             e.printStackTrace();
@@ -65,5 +66,18 @@ public class MemeBody {
     }
     public void purge(){
         openImage();
+    }
+    public TextBody getTextBodyByName(String name){
+        for(TextBody tb: getTextBoxes()){
+            if(tb.getName().equalsIgnoreCase(name))
+                return tb;
+        }
+        return null;
+    }
+
+    public void clearAllTextBoxes(){
+        for(TextBody tb: getTextBoxes()){
+            tb.setText(new ArrayList<>());
+        }
     }
 }

@@ -15,15 +15,19 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Meme extends AbstractMessageReceivedAction {
+public abstract class Meme extends AbstractMessageReceivedAction {
 
     private ArrayList<MemeBody> memes = new ArrayList<>();
 
+    /**
+     * This is where you should set the MemeBody image and text fields
+     */
+    public abstract void populateMeme();
 
     public Meme(){
         Body body = new Body();
         setBody(body);
-        getBody().getAttributes().add(Attributes.MEME);
+        body.getAttributes().add(Attributes.MEME);
     }
 
     private MemeBody chooseMeme(){
@@ -33,6 +37,7 @@ public class Meme extends AbstractMessageReceivedAction {
     @Override
     public boolean build() {
         try{
+            //pick a random meme
             MemeBody memeBody = chooseMeme();
             memeBody.build();
             getState().put("meme",memeBody);
@@ -40,7 +45,20 @@ public class Meme extends AbstractMessageReceivedAction {
             memeBody.openImage();
             Graphics g = memeBody.getImage().getGraphics();
             for(TextBody tb: memeBody.getTextBoxes()){
-                MemePainter.drawCenteredString(g,tb.getText(),tb.getPoint(),App.FONT,App.FONT_BORDER_THICKNESS);
+                if(tb.isElastic())
+                    MemePainter.drawCenteredString(
+                            memeBody.getImage(),
+                            tb.chooseTextAndApplyAliases(getEvent()),
+                            tb.getPoint(),
+                            new Font(tb.getName(),tb.getFontStyle(),tb.getFontSize()),
+                            tb.getTextBorder());
+                else
+                    MemePainter.drawCenteredString(
+                            g,
+                            tb.chooseTextAndApplyAliases(getEvent()),
+                            tb.getPoint(),
+                            new Font(tb.getName(),tb.getFontStyle(),tb.getFontSize()),
+                            tb.getTextBorder());
             }
             return true;
         }catch (Exception e){
@@ -53,8 +71,12 @@ public class Meme extends AbstractMessageReceivedAction {
     public boolean execute() {
         //TODO send image
         try {
-            File outputfile = new File(App.tempFileName);
-            ImageIO.write(((MemeBody) getState().get("meme")).getImage(), "png", outputfile);
+            File outputfile = new File(App.RESOURCES_PATH+App.tempFileName);
+            ImageIO.write(
+                    ((MemeBody) getState()
+                            .get("meme"))
+                    .getImage(),
+                    "png", outputfile);
             getEvent().getChannel().sendFile(outputfile, App.tempFileName).queue();
 
             return true;
@@ -78,6 +100,13 @@ public class Meme extends AbstractMessageReceivedAction {
 
     public void setMemes(ArrayList<MemeBody> memes) {
         this.memes = memes;
+    }
+
+    public void clearAllMemes(){
+        for(MemeBody mb: getMemes()){
+            mb.openImage();
+            mb.clearAllTextBoxes();
+        }
     }
 
 //    @Override

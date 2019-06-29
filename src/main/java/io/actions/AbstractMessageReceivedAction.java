@@ -1,5 +1,6 @@
 package io.actions;
 
+import enums.Attributes;
 import global.App;
 import global.Defaults;
 import io.structure.Body;
@@ -7,6 +8,7 @@ import io.MessageSender;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,6 +32,7 @@ public abstract class AbstractMessageReceivedAction {
      */
     private String content;
 
+
     /**
      * The Event which triggered this action
      */
@@ -44,7 +47,6 @@ public abstract class AbstractMessageReceivedAction {
     public AbstractMessageReceivedAction(){  }
 
 
-
     /**
      * Attempts to find a match with the Body's regex
      * This is called before at the start of the process
@@ -53,8 +55,9 @@ public abstract class AbstractMessageReceivedAction {
     public boolean attemptToMatch(){
         try{
             for(String regex : body.getIn()){
-                matcher = Pattern.compile("(?i)"+regex).matcher(content);
-                if(matcher.find()){
+                Matcher m = Pattern.compile("(?i)"+regex).matcher(content);
+                if(m.find()){
+                    matcher = m;
                     return true;
                 }
             }

@@ -4,6 +4,7 @@ import global.Utilities;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class MessageUtils {
     /**
@@ -22,6 +23,11 @@ public class MessageUtils {
         }
 
         return str;
+    }
+
+    public static String chooseString(ArrayList<String> arr){
+        Random rand = new Random();
+        return arr.get(rand.nextInt(arr.size()));
     }
 
     public static final String[] affirmative = new String[]{

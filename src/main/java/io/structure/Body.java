@@ -5,6 +5,11 @@ import enums.Attributes;
 import java.util.ArrayList;
 
 public class Body {
+
+    /**
+     * All these fields are in here to make custom actions from command line easy
+     * as well as interfacing with those actions
+     */
     private String name = "Untitled";
     private String description = "No description";
     private boolean on = true;
