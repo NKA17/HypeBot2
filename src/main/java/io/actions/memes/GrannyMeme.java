@@ -14,7 +14,9 @@ public class GrannyMeme extends Meme {
         getBody().setName("Granny");
         getBody().getAttributes().add(Attributes.VANILLA);
         getBody().getIn().add("(?<wtf>wtf|(what|wat) \\w+ fuck)");
-        getBody().getIn().add(".{0,4}(?<wdhs>^(what|wat|wut|huh|\\?+).{0,4}$");
+        getBody().getIn().add(".{0,4}(?<wdhs>^(what|wat|wut|huh|\\?+)).{0,4}$");
+
+        populateMeme();
     }
     @Override
     public void populateMeme() {
@@ -24,13 +26,25 @@ public class GrannyMeme extends Meme {
 
 
 
-        TextBody t1 = new TextBody("Granny",new Point(385,125));
-        t1.setFontSize(20);
-        t1.getText().add(" ");
-        t1.getText().add("#auth");
-        TextBody t2 = new TextBody("Caption",new Point(320,450));
-        t2.setFontSize(25);
+        TextBody t1 = new TextBody("t1",new Point(385,125));
+        t1.setFontSize(40);
+        TextBody t2 = new TextBody("t2",new Point(320,450));
+        t2.setFontSize(50);
         meme.getTextBoxes().add(t1);
         meme.getTextBoxes().add(t2);
+        addText2("WHAT THE FUCK?");
+        addText1("#auth");
+    }
+
+    public boolean prebuild(){
+        return true;
+    }
+
+
+    public void addText1(String text){
+        getFirstMeme().getTextBodyByName("t1").getText().add(text);
+    }
+    public void addText2(String text){
+        getFirstMeme().getTextBodyByName("t2").getText().add(text);
     }
 }

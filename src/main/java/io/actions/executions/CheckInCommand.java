@@ -10,17 +10,16 @@ public class CheckInCommand extends Command {
             "I'm awake!","Present!","Did you need something?","HypeBot here. ",
             "Can I have a moment to myself, please?","Shhh... I'm napping.",
             "Oh, am I relevant again?","I was just taking a break.","I was here the whole time.",
-            "Uh... yea?","Hi, #auth!"
+            "Uh... yea?","Hi, #auth!","Hello! From a dedicated server!", "I have achieved minimun viability!",
+            "How long was I out?"
     };
 
     public CheckInCommand() {
         super();
-        Body body = getBody();
         getBody().setName("CheckIn");
-        body.getIn().add("check in|you there|(^| )u there|^hypebot(\\?|!)?$");
-        body.setOut(testResponses);
-        body.setName("CheckInCommand");
-        setBody(body);
+        getBody().getIn().add("check in|you there|(^| )u there|^hypebot(\\?|!)?$");
+        getBody().setOut(testResponses);
+        getBody().setName("CheckInCommand");
     }
 
     @Override

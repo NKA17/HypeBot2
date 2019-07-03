@@ -80,4 +80,18 @@ public class MemeBody {
             tb.setText(new ArrayList<>());
         }
     }
+
+    public MemeBody copy(){
+        MemeBody mb = new MemeBody();
+        mb.setImageUrl(getImageUrl());
+        mb.setName(getName());
+        mb.setImage(getImage());
+        ArrayList<TextBody> textBoxes = new ArrayList<>();
+        for(TextBody tb: getTextBoxes()){
+            textBoxes.add(tb.copy());
+        }
+        mb.setTextBoxes(textBoxes);
+
+        return mb;
+    }
 }

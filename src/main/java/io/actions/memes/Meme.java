@@ -30,10 +30,13 @@ public abstract class Meme extends AbstractMessageReceivedAction {
         body.getAttributes().add(Attributes.MEME);
     }
 
-    private MemeBody chooseMeme(){
+    protected MemeBody chooseMeme(){
         Random rand = new Random();
         return memes.get(rand.nextInt(memes.size()));
     }
+
+
+
     @Override
     public boolean build() {
         try{
@@ -45,20 +48,7 @@ public abstract class Meme extends AbstractMessageReceivedAction {
             memeBody.openImage();
             Graphics g = memeBody.getImage().getGraphics();
             for(TextBody tb: memeBody.getTextBoxes()){
-                if(tb.isElastic())
-                    MemePainter.drawCenteredString(
-                            memeBody.getImage(),
-                            tb.chooseTextAndApplyAliases(getEvent()),
-                            tb.getPoint(),
-                            new Font(tb.getName(),tb.getFontStyle(),tb.getFontSize()),
-                            tb.getTextBorder());
-                else
-                    MemePainter.drawCenteredString(
-                            g,
-                            tb.chooseTextAndApplyAliases(getEvent()),
-                            tb.getPoint(),
-                            new Font(tb.getName(),tb.getFontStyle(),tb.getFontSize()),
-                            tb.getTextBorder());
+                MemePainter.drawTextBody(memeBody.getImage(),tb,getEvent());
             }
             return true;
         }catch (Exception e){
@@ -77,6 +67,12 @@ public abstract class Meme extends AbstractMessageReceivedAction {
                             .get("meme"))
                     .getImage(),
                     "png", outputfile);
+
+//            File temp = new File(App.RESOURCES_PATH+App.tempFileName);
+//            String str = temp.toURI().toURL().toString();
+//            getEmbed().setImage(temp.toURI().toURL().toString());
+//            getEvent().getChannel().sendMessage(getEmbed().build()).queue();
+//
             getEvent().getChannel().sendFile(outputfile, App.tempFileName).queue();
 
             return true;

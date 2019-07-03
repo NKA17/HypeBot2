@@ -10,6 +10,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,6 +33,11 @@ public abstract class AbstractMessageReceivedAction {
      */
     private String content;
 
+    /**
+     * Use for random stuff
+     */
+    private Random random = new Random();
+
 
     /**
      * The Event which triggered this action
@@ -40,11 +46,16 @@ public abstract class AbstractMessageReceivedAction {
 
     private EmbedBuilder embed = Defaults.getEmbedBuilder();
 
+    private double likelihood = 1;
+
     public AbstractMessageReceivedAction(Body body){
+        super();
         this.body = body;
     }
 
-    public AbstractMessageReceivedAction(){  }
+    public AbstractMessageReceivedAction(){
+
+    }
 
 
     /**
@@ -69,6 +80,15 @@ public abstract class AbstractMessageReceivedAction {
     }
 
     /**
+     * Called immediately before build()
+     * allows you to do some logic after receiving the event, before the reaction is constructed
+     * @return
+     */
+    public  boolean prebuild(){
+        return true;
+    }
+
+    /**
      * Use to build necessary items for execution
      * This is called between attemptToMatch() and execute(...)
      */
@@ -83,6 +103,11 @@ public abstract class AbstractMessageReceivedAction {
         ms.sendMessage(getBody().getOut());
         return true;
     }
+    public boolean sendResponse(String str){
+        MessageSender ms = new MessageSender(getEvent());
+        ms.sendMessage(str,true);
+        return true;
+    }
 
     /**
      * Builds and sends the embed
@@ -91,6 +116,18 @@ public abstract class AbstractMessageReceivedAction {
         getEvent().getChannel().sendMessage(getEmbed().build()).queue();
         return true;
     }
+
+    /**
+     * Uses the likelihood field to determine whether this 'happens'
+     *  ie
+     *      if likelihood = .5, this method will return true 50% of the time
+     * @return
+     */
+    public boolean happens(){
+        Random rand = new Random();
+        return rand.nextDouble() <= getLikelihood();
+    }
+
 
     /**
      * This is what your action should perform. Some actions send messages, some edit local variables,
@@ -146,6 +183,22 @@ public abstract class AbstractMessageReceivedAction {
 
     public void setEmbed(EmbedBuilder embed) {
         this.embed = embed;
+    }
+
+    public Random getRandom() {
+        return random;
+    }
+
+    public void setRandom(Random random) {
+        this.random = random;
+    }
+
+    public double getLikelihood() {
+        return likelihood;
+    }
+
+    public void setLikelihood(double likelihood) {
+        this.likelihood = likelihood;
     }
 
     /**

@@ -44,6 +44,9 @@ public class MessageSender {
     }
     public void sendMessage(String[] messageOptions,boolean applyAliases){
         String message = chooseMessage(messageOptions);
+        sendMessage(message,applyAliases);
+    }
+    public void sendMessage(String message, boolean applyAliases){
 
         if(!message.matches("http.*")) {
             if(applyAliases)

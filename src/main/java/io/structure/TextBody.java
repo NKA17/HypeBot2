@@ -13,10 +13,11 @@ public class TextBody {
     private ArrayList<String> text;
     private String name;
     private String fontName;
-    private int fontStyle;
+    private int fontStyle = Font.BOLD;
     private int fontSize;
     private boolean elastic = true;
     private int textBorder;
+    private boolean centered = true;
 
 
     public TextBody(String name, Point p1,String textBody){
@@ -107,11 +108,40 @@ public class TextBody {
         this.text = text;
     }
 
+    public void setText(String s){
+        ArrayList<String> arr = new ArrayList<>();
+        arr.add(s);
+        setText(arr);
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isCentered() {
+        return centered;
+    }
+
+    public void setCentered(boolean centered) {
+        this.centered = centered;
+    }
+
+    public TextBody copy(){
+        TextBody tb = new TextBody(null,null);
+        tb.setPoint(getPoint());
+        tb.setText(getText());
+        tb.setName(getName());
+        tb.setFontName(getFontName());
+        tb.setFontStyle(getFontStyle());
+        tb.setFontSize(getFontSize());
+        tb.setElastic(isElastic());
+        tb.setTextBorder(getTextBorder());
+        tb.setCentered(isCentered());
+
+        return tb;
     }
 }

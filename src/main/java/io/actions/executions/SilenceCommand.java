@@ -2,17 +2,15 @@ package io.actions.executions;
 
 import global.App;
 import global.MessageUtils;
-import io.structure.Body;
+import io.actions.memes.CoolsvilleA;
 
 public class SilenceCommand extends Command {
     public SilenceCommand() {
         super();
-        Body body = getBody();
         getBody().setName("Silence");
-        body.getIn().add("chill|relax|sleep|silent|silence|quiet");
-        body.setOut(MessageUtils.affirmative);
-        body.setName("SilenceCommand");
-        setBody(body);
+        getBody().getIn().add("chill|relax|sleep|silent|silence|quiet");
+        getBody().setOut(MessageUtils.affirmative);
+        getBody().setName("SilenceCommand");
     }
 
 
@@ -24,8 +22,21 @@ public class SilenceCommand extends Command {
     @Override
     public boolean execute(boolean respond) {
         App.messageEvent.sendMessages = false;
-        if(respond)
-            sendResponse();
+
+        switch (getRandom().nextInt(2)) {
+            case 0:
+                if (respond)
+                    sendResponse();
+                break;
+            case 1:
+                CoolsvilleA cv = new CoolsvilleA();
+                cv.setEvent(getEvent());
+                cv.setContent(App.BOT_NAME+", chill");
+                cv.attemptToMatch();
+                cv.prebuild();
+                cv.build();
+                cv.execute();
+        }
 
         return true;
     }

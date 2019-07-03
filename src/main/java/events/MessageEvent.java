@@ -1,10 +1,15 @@
 package events;
 
+import com.google.gson.Gson;
 import enums.Attributes;
 import global.App;
+import global.Defaults;
 import io.actions.AbstractMessageReceivedAction;
+import io.actions.aliases.Alias;
+import io.structure.Body;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +19,7 @@ import java.util.Random;
 public class MessageEvent extends ListenerAdapter {
 
     public ArrayList<AbstractMessageReceivedAction> sendActions = new ArrayList<>();
+    public ArrayList<AbstractMessageReceivedAction> performActions = new ArrayList<>();
     public ArrayList<AbstractMessageReceivedAction> exeActions = new ArrayList<>();
     public ArrayList<AbstractMessageReceivedAction> memeActions = new ArrayList<>();
     public ArrayList<ArrayList<AbstractMessageReceivedAction>> allActions = new ArrayList<>();
@@ -23,15 +29,23 @@ public class MessageEvent extends ListenerAdapter {
         allActions.add(exeActions);
         allActions.add(sendActions);
         allActions.add(memeActions);
+        allActions.add(performActions);
     }
+
+    private boolean commandIssued = false;
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event){
         if(event.getAuthor().getId().equalsIgnoreCase(App.BOT_ID))
             return;
 
-        for(ArrayList<AbstractMessageReceivedAction> actionList: allActions){
-            runList(actionList,event);
+        commandIssued = false;
+        ArrayList<AbstractMessageReceivedAction> all = new ArrayList<>();
+        for(ArrayList<AbstractMessageReceivedAction> list: allActions){
+            all.addAll(list);
         }
+
+        runList(all,event);
+
     }
 
     public void runList(ArrayList<AbstractMessageReceivedAction> list,GuildMessageReceivedEvent event){
@@ -51,31 +65,88 @@ public class MessageEvent extends ListenerAdapter {
             }
         }
 
-        if(valid.size()>0) {
-            AbstractMessageReceivedAction chosen = chooseEvent(valid);
+        AbstractMessageReceivedAction chosen = chooseEvent(valid);
+        if(chosen==null)
+            return;
 
-            //attempt to build
-            chosen.setEvent(event);
-            chosen.setContent(event.getMessage().getContentRaw());
-            boolean buildSuccess = chosen.build();
-            if (!buildSuccess)
-                return;
+        //prebuild
+        boolean prebuilt = chosen.prebuild();
+        if(!prebuilt)
+            return;
 
-            //attempt to execute the action
-            boolean executeSuccess = chosen.execute();
+        //attempt to build
+        chosen.setEmbed(Defaults.getEmbedBuilder());
+        chosen.setEvent(event);
+        chosen.setContent(event.getMessage().getContentRaw());
+        boolean buildSuccess = chosen.build();
+        if (!buildSuccess)
+            return;
 
-            //reset the action
-            //chosen.purge();
-        }
+        //attempt to execute the action
+        boolean executeSuccess = chosen.execute();
+
+        //reset the action
+        //chosen.purge();
+
     }
 
-    private AbstractMessageReceivedAction chooseEvent(ArrayList<AbstractMessageReceivedAction> list){
+    private AbstractMessageReceivedAction getRandom(ArrayList<AbstractMessageReceivedAction> list){
         Random rand = new Random();
         return list.get(rand.nextInt(list.size()));
     }
 
+    private AbstractMessageReceivedAction chooseEvent(ArrayList<AbstractMessageReceivedAction> list){
+        Random rand = new Random();
+        while(list.size() > 0){
+            AbstractMessageReceivedAction ar = getRandom(list);
+            if(ar.happens()){
+                return ar;
+            }else{
+                list.remove(ar);
+            }
+        }
+        return  null;
+    }
+
     public boolean removeSendAction(String name){
         return removeFromList(sendActions,name);
+    }
+    public boolean removeActionAction(String name){
+        return removeFromList(performActions, name);
+    }
+    public boolean removeMemeAction(String name){
+        return removeFromList(memeActions,name);
+    }
+    public boolean removeAny(String name){
+        boolean y;
+        y = removeSendAction(name);
+        if(y)return true;
+
+        y = removeActionAction(name);
+        if(y)return true;
+
+        y = removeMemeAction(name);
+        if(y)return true;
+
+        y = removeAlias(name);
+        if(y)return true;
+
+        return false;
+    }
+    public boolean removeAlias(String name){
+        Alias target = null;
+        for(Alias ar: App.ALIASES){
+            if(ar.getBody().getName().equalsIgnoreCase(name)){
+                target = ar;
+                break;
+            }
+        }
+        if(target!=null){
+            App.ALIASES.remove(target);
+            return true;
+        }else {
+            return false;
+        }
     }
     public boolean removeFromList(ArrayList<AbstractMessageReceivedAction> list,String name){
 

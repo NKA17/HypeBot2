@@ -6,12 +6,10 @@ import io.structure.Body;
 public class SpeakCommand extends Command {
     public SpeakCommand() {
         super();
-        Body body = getBody();
         getBody().setName("Speak");
-        body.getIn().add("wake up");
-        body.getIn().add("focus|pay attention");
-        body.setName("CheckInCommand");
-        setBody(body);
+        getBody().getIn().add("wake up");
+        getBody().getIn().add("focus|pay attention");
+        getBody().setName("CheckInCommand");
     }
 
 
