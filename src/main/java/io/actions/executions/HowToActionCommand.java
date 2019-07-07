@@ -69,7 +69,13 @@ public class HowToActionCommand extends Command {
                                     "This tells me how often I should choose to execute this particular action. *ie - A likelihood which " +
                                     "equals 0.75 means I will ignore it 25% of the time.\n" +
                                     "***Default=1.0***\n" +
-                                    "Syntax: likelihood = *double*", true);
+                                    "Syntax: likelihood = *double*", true)
+                    .addField("***Aliases***","An important part of utilizing "+App.BOT_NAME+"'s full potential" +
+                            " requires *Aliases*. These are functions that "+App.BOT_NAME+" executes on every message he " +
+                            "sends to the channel. They replace certain parts of text with global variables. For example, you " +
+                            "could use an alias to make "+App.BOT_NAME+" say nice things to people. If "+App.BOT_NAME+" should" +
+                            " thank people for sending messages, use an alias in an output string such as \"Hey, #auth! Thanks " +
+                            "for the message!\" and he might say \"Hey, DiscordUser2! Thanks for the message!\"\n\tSay, \""+App.BOT_NAME+", show all aliases.\" to see more aliases.",true);
 
 
         }else{

@@ -40,9 +40,9 @@ public class MessageEvent extends ListenerAdapter {
         if(event.getAuthor().getId().equalsIgnoreCase(App.BOT_ID))
             return;
 
-
-        if(event.getGuild().getId().equalsIgnoreCase("524035064523259924"))
-            return;
+//
+//        if(event.getGuild().getId().equalsIgnoreCase("524035064523259924"))
+//            return;
         commandIssued = false;
 
         ArrayList<AbstractMessageReceivedAction> all = new ArrayList<>();
@@ -96,6 +96,13 @@ public class MessageEvent extends ListenerAdapter {
 
         //reset the action
         //chosen.purge();
+
+    }
+
+    private void readMessage(GuildMessageReceivedEvent event){
+        readMessage(event,event.getMessage().getContentRaw());
+    }
+    private void readMessage(GuildMessageReceivedEvent event, String content){
 
     }
 

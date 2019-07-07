@@ -7,7 +7,7 @@ import events.MessageEvent;
 import io.actions.AbstractMessageReceivedAction;
 import io.actions.SendAction;
 import io.actions.actions.BlankAction;
-import io.actions.aliases.Alias;
+import io.actions.aliases.*;
 import io.actions.executions.*;
 import io.actions.memes.*;
 import io.actions.sends.ChuckNorrisResponse;
@@ -27,13 +27,13 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class App {
-    public static final String VERSION = "Beta 1.2.2";
-    public static String BOT_NAME = "HyperBot";
+    public static final String VERSION = "Beta 1.2.5";
+    public static String BOT_NAME = "HypeBot";
     public static ArrayList<Alias> ALIASES = new ArrayList<>();
     public static final String BOT_ID = "590356017976573960";
     public static final String tempFileName = "aSaucyMeme.png";
-    //public static final String RESOURCES_PATH = "C:\\Users\\Nate\\IdeaProjects\\HypeBot2\\src\\main\\resources\\";
-    public static String RESOURCES_PATH = "";
+    public static String RESOURCES_PATH = "C:\\Users\\Nate\\IdeaProjects\\HypeBot2\\src\\main\\resources\\";
+    //public static String RESOURCES_PATH = "";
     public static MessageEvent messageEvent;
     public static Font FONT = new Font("Arial Black", Font.BOLD, 20);
     public static int FONT_BORDER_THICKNESS = 2;
@@ -76,6 +76,7 @@ public class App {
         messageEvent.exeActions.add(new IntroduceCommand());
         messageEvent.exeActions.add(new HowToEditCommand());
         messageEvent.exeActions.add(new HowToMemeCommand());
+        messageEvent.exeActions.add(new ChangeLogCommand());
 
 
         messageEvent.memeActions.add(new GrannyMeme());
@@ -89,6 +90,12 @@ public class App {
 
         messageEvent.sendActions.add(new PizzaPartyResponse());
         messageEvent.sendActions.add(new ChuckNorrisResponse());
+
+        App.ALIASES.add(new AuthorAlias());
+        App.ALIASES.add(new ChannelAlias());
+        App.ALIASES.add(new GuildAlias());
+        App.ALIASES.add(new OwnerAlias());
+        App.ALIASES.add(new TimestampAlias());
 
 
         jda.addEventListener(messageEvent);

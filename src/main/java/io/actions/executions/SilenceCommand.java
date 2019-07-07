@@ -1,5 +1,7 @@
 package io.actions.executions;
 
+import cron.DayChangeAction;
+import cron.Timeable;
 import global.App;
 import global.MessageUtils;
 import global.Utilities;
@@ -62,6 +64,36 @@ public class SilenceCommand extends Command {
             cv.build();
             cv.execute();
 
+        }
+
+        if(getContent().toLowerCase().contains("take a break")||
+                getContent().toLowerCase().contains("a while")){
+
+            sendResponse("See you all tomorrow!","Just a short break, then.","You got it, #auth. See you tomorrow!",
+                    "I'll be back tomorrow, then. Bye, #guild!");
+
+            Timeable t = new Timeable() {
+                @Override
+                public boolean execute() {
+
+                    SpeakCommand sc = new SpeakCommand();
+                    sc.setEvent(getEvent());
+                    sc.setContent("HypeBot, back to work");
+                    sc.getBody().setOut("I'm back from break!","Feels good to be back!","That was a nice nap!",
+                            "Okay, I'm ready to get back to work!");
+                    sc.attemptToMatch();
+                    if(!sc.prebuild())
+                        return false;
+                    if(!sc.build())
+                        return false;
+
+
+                    return sc.execute();
+                }
+            };
+            DayChangeAction dca = new DayChangeAction(t);
+            Thread th = new Thread(dca);
+            th.start();
         }
         return true;
     }

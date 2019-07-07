@@ -1,0 +1,52 @@
+package cron;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class DayChangeAction implements Runnable{
+
+    private Timeable timeable;
+    public DayChangeAction(Timeable t){
+        timeable = t;
+    }
+
+
+    private String getCurrentTimeStamp() {
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyyMMdd");//dd/MM/yyyy
+        Date now = new Date();
+        String strDate = sdfDate.format(now);
+        return strDate;
+    }
+
+    private long getTSLong(){
+        return Long.parseLong(getCurrentTimeStamp());
+    }
+    @Override
+    public void run() {
+        long start = getTSLong();
+        while (start-getTSLong()==0){
+            try {
+                Thread.sleep(60000);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
+
+        timeable.execute();
+
+    }
+
+    public static void main(String[] args){
+        Timeable t = new Timeable() {
+            @Override
+            public boolean execute() {
+                System.out.println("Done!");
+                return true;
+            }
+        };
+        DayChangeAction dca = new DayChangeAction(t);
+        Thread th = new Thread(dca);
+        th.start();
+    }
+}

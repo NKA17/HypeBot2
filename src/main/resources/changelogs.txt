@@ -1,4 +1,5 @@
-Beta 1.2.2
+@Beta 1.2.2
+    @s
     #features
     --Started keeping change logs
     --HypeBot can be turned to silent mode with "HypeBot, take a break".
@@ -6,3 +7,16 @@ Beta 1.2.2
     --HypeBot does not respond to being turned to speak mode if he is already in speak mode
     #bugs
     --Fixed bug where HypeBot tried applying a capture group alias with a name that did not exist in matcher.
+    @f
+@Beta 1.2.3
+    @s
+    #features
+    --Telling HypeBot to invoke silent mode and including "Take a break" or "a while" will prompt him to automatically turn back on at midnight.
+    @f
+@Beta 1.2.5
+    @s
+    #features
+    --Turned the hard-coded aliases into built-in aliases.
+    --Added a command to access the change logs
+    --HypeBot explains Aliases when asked how to create actions
+    @f

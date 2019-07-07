@@ -14,9 +14,11 @@ public class MessageUtils {
      * @return
      */
     public static String applyAliases(GuildMessageReceivedEvent event, String str, ArrayList<Alias> aliases){
-        str =  str.replaceAll("#auth", event.getMessage().getAuthor().getName())
-                .replaceAll("#owner", Utilities.getOwner(event.getChannel()).getName())
-                .replaceAll("#timestamp", Utilities.makeTimeReadable(event));
+//        str =  str.replaceAll("#auth", event.getMessage().getAuthor().getName())
+//                .replaceAll("#owner", Utilities.getOwner(event.getChannel()).getName())
+//                .replaceAll("#timestamp", Utilities.makeTimeReadable(event))
+//                .replaceAll("#channel",event.getChannel().getName())
+//                .replaceAll("#guild",event.getGuild().getName());
 
         for (Alias a : aliases) {
 
