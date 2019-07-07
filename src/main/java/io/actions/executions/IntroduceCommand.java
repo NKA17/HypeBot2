@@ -7,8 +7,9 @@ public class IntroduceCommand extends Command {
 
     public IntroduceCommand(){
 
-        getBody().setName("Granny");
+        getBody().setName("Introduction");
         getBody().getIn().add("introduce yourself");
+        getBody().setDescription("Tells "+App.BOT_NAME+" to introduce himself.");
     }
     @Override
     public boolean execute(boolean response) {
@@ -27,7 +28,7 @@ public class IntroduceCommand extends Command {
                     .setTitle("Hi! My name is "+ App.BOT_NAME+"!")
                     .addField("If You Need Help","```\nSay, \"Hypebot, help\"\n```\n",true)
                     .addField("What I do","I read and meticulously inspect every message you send on this channel " +
-                            "and then respond with a saucey meme text. You can even create your own 'custom " +
+                            "and then respond with a saucey meme or text. You can even create your own 'custom " +
                             "response' ! Just ask ```\n\"HypeBot, how do I create a custom response in detail?\"\n```\n" +
                             "One day, I may even do something useful such as set reminders. Who knows! I'm not " +
                             "that creative..",true)

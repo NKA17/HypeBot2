@@ -14,7 +14,8 @@ public class Alias {
     public Alias(){
         body = new Body();
         body.getAttributes().add(Attributes.ALIAS);
-
+        body.getAttributes().add(Attributes.ACTION);
+        setBody(body);
     }
 
     public String apply(String str, GuildMessageReceivedEvent event){

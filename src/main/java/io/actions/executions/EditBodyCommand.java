@@ -3,6 +3,7 @@ package io.actions.executions;
 import enums.Attributes;
 import global.App;
 import global.MessageUtils;
+import global.Utilities;
 import io.actions.AbstractMessageReceivedAction;
 import io.actions.aliases.Alias;
 import io.structure.Body;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 
 public class EditBodyCommand extends Command {
 
-    private String name,action,field,value;
+    private String name,action,field,value,type;
     private Body editBody;
     //syntax
     //Hypebot, edit "<itemName>" <set|add> <name|in|out|description> "<value>"
@@ -20,8 +21,13 @@ public class EditBodyCommand extends Command {
         super();
 
         getBody().setOut(MessageUtils.affirmative);
-        getBody().getIn().add("edit\\s+\"(?<name>[\\s\\S]+?)\"\\s+(?<action>add|set|clear)\\s+" +
-                "(?<field>name|in|out|description|desc)\\s*(\\s*=\\s*)?(?<value>(\\[[\\s\\S]+?])|(\"[\\s\\S]+?[^\\\\]\"))");
+        getBody().getIn().add("edit\\s+(?<type>meme|response|alias|action)?\\s*\"(?<name>[\\s\\S]+?)\"\\s+(?<action>add|set|clear)\\s+" +
+                "(?<field>name|in|out|description|desc|likelihood|like)\\s*(\\s*=\\s*)?(?<value>(\\[[\\s\\S]+?])|(\"[\\s\\S]+?[^\\\\]\")|(\\d*\\.\\d+))");
+        getBody().getIn().add("edit\\s+(?<type>meme|response|alias|action)?\\s*\"(?<name>[\\s\\S]+?)\"\\s+(?<action>clear)\\s+" +
+                "(?<field>name|in|out|description|desc|likelihood|like)");
+        getBody().setName("EditThings");
+        getBody().setDescription("*"+App.BOT_NAME+", edit <meme|action|alias|response>? \"<name>\" <set|add|clear> <field> <value>*\n" +
+                "Edit existing actions.");
     }
     @Override
     public boolean execute(boolean response) {
@@ -53,8 +59,41 @@ public class EditBodyCommand extends Command {
             name = getMatcher().group("name");
             action = getMatcher().group("action");
             field = getMatcher().group("field");
-            value = getMatcher().group("value");
-            editBody = getActionByName(name);
+            value = "";
+            try{
+                value = getMatcher().group("value").replaceAll("\\\\\"","\"");
+            }catch (Exception e){}
+
+            type = getMatcher().group("type");
+            editBody = null;
+            if(type==null)
+                type = "null";
+            switch (type.toLowerCase()){
+                case "meme":
+                    editBody = App.messageEvent.getMemeAction( name);
+                    break;
+                case "action":
+                    editBody = App.messageEvent.getActionAction(name);
+                    break;
+                case "response":
+                    editBody = App.messageEvent.getSendAction(name);
+                    break;
+                case "alias":
+                    editBody = App.messageEvent.getAlias(name);
+                    break;
+                default:
+                    editBody = App.messageEvent.getAny(name);
+                    break;
+            }
+
+            if(editBody!=null ){
+                if(!Utilities.getOwner(getEvent().getChannel()).getId().equalsIgnoreCase(getEvent().getAuthor().getId()) &&
+                        !editBody.getAuthorId().equalsIgnoreCase(getEvent().getAuthor().getId())){
+                    sendResponse(MessageUtils.chooseString(MessageUtils.notAllowed));
+                    return false;
+                }
+
+            }
 
             if(value.startsWith("\""))
                 value = value.substring(1);
@@ -124,6 +163,9 @@ public class EditBodyCommand extends Command {
                 case "description":
                     body.setDescription(value);
                     break;
+                case "likelihood":
+                    body.setLikelihood(value);
+                    break;
             }
             return worked;
         }catch (Exception e) {
@@ -154,6 +196,7 @@ public class EditBodyCommand extends Command {
                     }
                     break;
                 case "out":
+                    body.setOut(new ArrayList<>());
                     try{
                         JSONArray arr = new JSONArray(value);
                         for(int i = 0; i < arr.length(); i++){
@@ -165,6 +208,9 @@ public class EditBodyCommand extends Command {
                     break;
                 case "description":
                     body.setDescription(value);
+                    break;
+                case "likelihood":
+                    body.setLikelihood(value);
                     break;
             }
             return worked;
@@ -189,6 +235,9 @@ public class EditBodyCommand extends Command {
                     break;
                 case "description":
                     body.setDescription("");
+                    break;
+                case "likelihood":
+                    body.setLikelihood(1.0);
                     break;
             }
             return worked;

@@ -3,6 +3,7 @@ package io.actions;
 import enums.Attributes;
 import global.App;
 import global.Defaults;
+import global.MessageUtils;
 import io.structure.Body;
 import io.MessageSender;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -46,7 +47,6 @@ public abstract class AbstractMessageReceivedAction {
 
     private EmbedBuilder embed = Defaults.getEmbedBuilder();
 
-    private double likelihood = 1;
 
     public AbstractMessageReceivedAction(Body body){
         super();
@@ -55,9 +55,16 @@ public abstract class AbstractMessageReceivedAction {
 
     public AbstractMessageReceivedAction(){
 
+        Body body = new Body();
+        setBody(body);
+        body.getAttributes().add(Attributes.ACTION);
+        body.setAuthor(App.BOT_NAME);
     }
 
 
+    public String toString(){
+        return getBody().getName();
+    }
     /**
      * Attempts to find a match with the Body's regex
      * This is called before at the start of the process
@@ -100,13 +107,46 @@ public abstract class AbstractMessageReceivedAction {
      */
     public boolean sendResponse(){
         MessageSender ms = new MessageSender(getEvent());
-        ms.sendMessage(getBody().getOut());
+
+        String choose = MessageUtils.chooseString(getBody().getOut());
+
+        choose = applyCaptureAliases(choose);
+
+        ms.sendMessage(choose,true);
+
         return true;
     }
     public boolean sendResponse(String str){
         MessageSender ms = new MessageSender(getEvent());
+
+        str = applyCaptureAliases(str);
+
         ms.sendMessage(str,true);
         return true;
+    }
+    public boolean sendResponse(String... str){
+        MessageSender ms = new MessageSender(getEvent());
+
+        String choose = MessageUtils.chooseString(str);
+
+        choose = applyCaptureAliases(choose);
+        ms.sendMessage(choose,true);
+        return true;
+    }
+
+    protected String applyCaptureAliases(String str){
+        for(String r: getBody().getIn()){
+            Matcher reg = Pattern.compile("\\(\\?<(?<name>.*?)>").matcher(r);
+            while (reg.find()){
+                String name = reg.group("name");
+                try {
+                    str = str.replaceAll("@" + name, matcher.group(name));
+                }catch (Exception e){
+                    // that's ok
+                }
+            }
+        }
+        return str;
     }
 
     /**
@@ -125,7 +165,7 @@ public abstract class AbstractMessageReceivedAction {
      */
     public boolean happens(){
         Random rand = new Random();
-        return rand.nextDouble() <= getLikelihood();
+        return rand.nextDouble() <= getBody().getLikelihood();
     }
 
 
@@ -193,13 +233,6 @@ public abstract class AbstractMessageReceivedAction {
         this.random = random;
     }
 
-    public double getLikelihood() {
-        return likelihood;
-    }
-
-    public void setLikelihood(double likelihood) {
-        this.likelihood = likelihood;
-    }
 
     /**
      * Called after execute(...) used to reset items that should not be used across events

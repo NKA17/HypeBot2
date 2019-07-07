@@ -57,8 +57,8 @@ public class MessageUtils {
             "You're not my dad!",
             "I only do that for #owner.",
             "I only do that for #owner.  ;)",
-            "https://i.ytimg.com/vi/kCNMbhdlrHo/hqdefault.jpg",
-            "https://i.imgflip.com/33bfx1.jpg"
+            "https://i.ytimg.com/vi/kCNMbhdlrHo/hqdefault.jpg \n",
+            "https://i.imgflip.com/33bfx1.jpg",
     };
 
     public static final String[] failedCommand = new String[]{

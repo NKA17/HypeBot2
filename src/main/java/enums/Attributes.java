@@ -10,6 +10,7 @@ public enum Attributes {
     SEND, //Action that responds to messages sent in chat
     EXECUTE, //Action edits local runtime variables
     ALIAS, //Replaces text in SEND action responses
-    MEME //Dedicated for sending captioned images
+    MEME, //Dedicated for sending captioned images
+    ACTION, //All actions have this
     ;
 }

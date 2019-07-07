@@ -5,6 +5,7 @@ import global.App;
 import global.MessageUtils;
 import io.actions.AbstractMessageReceivedAction;
 import io.actions.SendAction;
+import io.actions.actions.BlankAction;
 import io.actions.aliases.Alias;
 import io.structure.Body;
 import org.json.JSONArray;
@@ -14,22 +15,38 @@ import java.util.regex.Pattern;
 
 public class CreateActionCommand extends Command {
 
-    private String name,type,in,out,description;
+    private String name,type,in,out,description,likelihood;
     public CreateActionCommand(){
         super();
+        getBody().setDescription("*"+ App.BOT_NAME+", create <meme|action|alias|response> name = \"<name>\".\n"+
+                "Create a custom action.");
+        getBody().setName("CreateThings");
         getBody().setOut(MessageUtils.affirmative);
-        getBody().getIn().add("create\\s+(?<type>response|alias|action)\\s+name(\\s*=\\s*)?\"(?<name>[\\s\\S]+?)\"");
+        getBody().getIn().add("create[\\s\\S]+?(?<type>response|alias|action)[\\s\\S]+?name(\\s*=\\s*)?\"(?<name>[\\s\\S]+?)\"");
         getBody().setOut(MessageUtils.affirmative);
     }
     @Override
     public boolean execute(boolean response) {
-        App.messageEvent.removeSendAction(name);
+        removeType(type,name);
 
         Body body = new Body();
         body.setName(name);
-        body.setAuthor(getEvent().getAuthor().getId());
+        body.setAuthorId(getEvent().getAuthor().getId());
+        body.setAuthor(getEvent().getAuthor().getName());
         body.setDescription(description);
         body.getAttributes().add(Attributes.CUSTOM);
+        body.getAttributes().add(Attributes.ACTION);
+
+        try{
+            double d = Double.parseDouble(likelihood.trim());
+            if(d > 1 || d < 0){
+                throw new IllegalArgumentException();
+            }
+            body.setLikelihood(d);
+        }catch (Exception e){
+            sendResponse(MessageUtils.chooseString(MessageUtils.failedCommand));
+            sendResponse("Make sure likelihood = a double between value of 1.0 and 0.0");
+        }
 
         try{
             JSONArray arr = new JSONArray(in);
@@ -63,7 +80,16 @@ public class CreateActionCommand extends Command {
                 App.ALIASES.add(alias);
                 App.saveAliases();
                 break;
+            case "action":
+                BlankAction ba = new BlankAction();
+                ba.setBody(body);
+                App.messageEvent.performActions.add(ba);
+                App.saveActions();
+                break;
 
+            case "meme":
+                sendResponse("Sorry, that's still in progress. But you can make something else!");
+                return false;
 
         }
 
@@ -118,6 +144,15 @@ public class CreateActionCommand extends Command {
             //thats ok
         }
 
+        try{
+            Matcher m = Pattern.compile("(likelihood|like)(\\s*=\\s*)?\\s*(\")?(?<likelihood>(\\d*)\\.\\d+)(\")?").matcher(getContent());
+            m.find();
+            likelihood = m.group("likelihood");
+        }catch (Exception e){
+            likelihood = "1.0";
+            //thats ok
+        }
+
 
         return true;
     }
@@ -131,5 +166,25 @@ public class CreateActionCommand extends Command {
         description=null;
 
         return true;
+    }
+
+    private void removeType(String type,String name){
+        switch (type.toLowerCase()){
+            case "meme":
+                App.messageEvent.removeMemeAction( name);
+                break;
+            case "action":
+                App.messageEvent.removeActionAction(name);
+                break;
+            case "response":
+                App.messageEvent.removeSendAction(name);
+                break;
+            case "alias":
+                App.messageEvent.removeAlias(name);
+                break;
+            default:
+                App.messageEvent.getAny(name);
+                break;
+        }
     }
 }

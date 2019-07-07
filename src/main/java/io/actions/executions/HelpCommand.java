@@ -14,6 +14,7 @@ public class HelpCommand extends Command {
         super();
         getBody().setName("Help");
         getBody().getIn().add("help");
+        getBody().setDescription("*"+App.BOT_NAME+", help.*\nOpens a Help page.");
 
         DrowningMeme dm1 = new DrowningMeme();
         GrannyMeme gm = new GrannyMeme();

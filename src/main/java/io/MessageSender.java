@@ -5,10 +5,12 @@ import global.Defaults;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import global.MessageUtils;
+import sun.applet.Main;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.regex.Matcher;
 
 public class MessageSender {
 

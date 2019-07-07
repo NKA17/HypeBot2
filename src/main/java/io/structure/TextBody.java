@@ -7,6 +7,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
 
 public class TextBody {
     private Point point;
@@ -93,6 +94,12 @@ public class TextBody {
     public String chooseText() {
         return MessageUtils.chooseString(text);
     }
+
+//    public String chooseTextAndApplyAliases(GuildMessageReceivedEvent event){
+//        String mess = MessageUtils.chooseString(text);
+//        mess = MessageUtils.applyAliases(event,mess,App.ALIASES);
+//        return mess;
+//    }
 
     public String chooseTextAndApplyAliases(GuildMessageReceivedEvent event){
         String mess = MessageUtils.chooseString(text);

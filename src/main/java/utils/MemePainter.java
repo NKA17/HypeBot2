@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 public class MemePainter {
 
+    private static Matcher matcher = null;
 
     public static void drawCenteredString(BufferedImage img, String text, Point p, Font font) {
         drawCenteredString(img,text,p,font, App.FONT_BORDER_THICKNESS);
@@ -204,5 +205,13 @@ public class MemePainter {
         int th = (int)(f.getStringBounds(text, frc).getHeight());
 
         return new Point(p.x,p.y+th-2);
+    }
+
+    public static Matcher getMatcher() {
+        return matcher;
+    }
+
+    public static void setMatcher(Matcher matcher) {
+        matcher = matcher;
     }
 }

@@ -1,29 +1,21 @@
 package io.actions.memes;
 
-import enums.Attributes;
 import global.App;
 import io.structure.MemeBody;
 import io.structure.TextBody;
-import utils.MemePainter;
 
 import java.awt.*;
-import java.util.Random;
 
-public class MockingSpongeBobMeme extends Meme {
+public class IsNotAMeme extends Meme {
 
-    protected TextBody t1;
-    protected TextBody t2;
-    public MockingSpongeBobMeme(){
+    TextBody t1;
+    public IsNotAMeme(){
         super();
-
-        getBody().setName("Mocking");
-        getBody().setDescription("SpOnGeBoB mOcKs YoU.");
-        getBody().getAttributes().add(Attributes.VANILLA);
-        getBody().getIn().add("^.{5,50}$");
-
-        getBody().setLikelihood(.05);
+        getBody().setName("MockingB");
+        getBody().getIn().add("(?<quote>a.*?is not.*?)");
         populateMeme();
     }
+
     @Override
     public void populateMeme() {
         MemeBody meme = new MemeBody();
@@ -35,13 +27,14 @@ public class MockingSpongeBobMeme extends Meme {
         t1.setFontSize(70);
         t1.setTextBorder(4);
 
-        t2 = new TextBody("t2",new Point(290,440));
+        TextBody t2 = new TextBody("t2",new Point(290,440));
         t2.setFontSize(45);
         t2.getText().add("#auth");
         t2.getText().add(" ");
         t2.setTextBorder(4);
         meme.getTextBoxes().add(t1);
     }
+
 
     public boolean prebuild(){
         String text = getEvent().getMessage().getContentRaw();
@@ -54,6 +47,4 @@ public class MockingSpongeBobMeme extends Meme {
         t1.setText(s);
         return true;
     }
-
-
 }

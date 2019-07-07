@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import enums.Attributes;
 import global.App;
 import global.Defaults;
+import global.MessageUtils;
+import global.Utilities;
 import io.actions.AbstractMessageReceivedAction;
 import io.actions.aliases.Alias;
 import io.structure.Body;
@@ -38,7 +40,11 @@ public class MessageEvent extends ListenerAdapter {
         if(event.getAuthor().getId().equalsIgnoreCase(App.BOT_ID))
             return;
 
+
+        if(event.getGuild().getId().equalsIgnoreCase("524035064523259924"))
+            return;
         commandIssued = false;
+
         ArrayList<AbstractMessageReceivedAction> all = new ArrayList<>();
         for(ArrayList<AbstractMessageReceivedAction> list: allActions){
             all.addAll(list);
@@ -53,7 +59,7 @@ public class MessageEvent extends ListenerAdapter {
         for(AbstractMessageReceivedAction action: list){
 
             //build action
-            action.setContent(event.getMessage().getContentRaw());
+            action.setContent(Utilities.consolidateQuotes(event.getMessage().getContentRaw()));
             action.setEvent(event);
             action.setState(new HashMap<>());
             boolean matchSuccess = action.attemptToMatch();
@@ -67,6 +73,9 @@ public class MessageEvent extends ListenerAdapter {
 
         AbstractMessageReceivedAction chosen = chooseEvent(valid);
         if(chosen==null)
+            return;
+
+        if(!chosen.getBody().getAttributes().contains(Attributes.EXECUTE) && !sendMessages)
             return;
 
         //prebuild
@@ -163,5 +172,54 @@ public class MessageEvent extends ListenerAdapter {
         }else {
             return false;
         }
+    }
+
+
+
+
+    public Body getSendAction(String name){
+        return getFromList(sendActions,name);
+    }
+    public Body getActionAction(String name){
+        return getFromList(performActions, name);
+    }
+    public Body getMemeAction(String name){
+        return getFromList(memeActions,name);
+    }
+    public Body getAny(String name){
+        Body y;
+        y = getSendAction(name);
+        if(y!=null)return y;
+
+        y = getActionAction(name);
+        if(y!=null)return y;
+
+        y = getMemeAction(name);
+        if(y!=null)return y;
+
+        y = getAlias(name);
+        if(y!=null)return y;
+
+        return null;
+    }
+    public Body getAlias(String name){
+        Alias target = null;
+        for(Alias ar: App.ALIASES){
+            if(ar.getBody().getName().equalsIgnoreCase(name)){
+                return ar.getBody();
+            }
+        }
+
+        return null;
+    }
+    public Body getFromList(ArrayList<AbstractMessageReceivedAction> list,String name){
+
+        AbstractMessageReceivedAction target = null;
+        for(AbstractMessageReceivedAction ar: list){
+            if(ar.getBody().getName().equalsIgnoreCase(name)){
+                return ar.getBody();
+            }
+        }
+        return null;
     }
 }

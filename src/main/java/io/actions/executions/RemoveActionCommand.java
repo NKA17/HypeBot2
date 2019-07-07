@@ -9,6 +9,8 @@ public class RemoveActionCommand extends Command {
         super();
 
         getBody().setName("RemoveCommand");
+        getBody().setDescription("*"+App.BOT_NAME+", remove <meme|action|alias|response> \"<name>\"*\n" +
+                "Removes the specified action");
 
         getBody().getIn().add("(remove|delete|discard)\\s+(?<type>alias|response|action)?\\s*\"(?<name>[\\s\\S]+?)\"");
         getBody().setOut(MessageUtils.affirmative);

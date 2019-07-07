@@ -2,21 +2,29 @@ package io.structure;
 
 import enums.Attributes;
 
+import javax.naming.Name;
 import java.util.ArrayList;
 
 public class Body {
 
+    public static String DescDefault = "No description";
+    public static String InDefault = "[]";
+    public static String OutDefault = "[]";
+    public static String LikeDefault = "1.0";
+    public static String NameDefault = "Untitled";
     /**
      * All these fields are in here to make custom actions from command line easy
      * as well as interfacing with those actions
      */
-    private String name = "Untitled";
-    private String description = "No description";
+    private String name = NameDefault;
+    private String description = DescDefault;
     private boolean on = true;
     private String author = "";
+    private String authorId = "";
     private ArrayList<String> in = new ArrayList<String>();
     private ArrayList<String> out = new ArrayList<String>();
     private ArrayList<Attributes> attributes = new ArrayList<Attributes>();
+    private double likelihood = 1.0;
 
     public String[] getInAsArray(){
         String[] arr = new String[in.size()];
@@ -26,6 +34,19 @@ public class Body {
         String[] arr = new String[out.size()];
         return out.toArray(arr);
     }
+
+    public double getLikelihood() {
+        return likelihood;
+    }
+
+    public void setLikelihood(double likelihood) {
+        this.likelihood = likelihood;
+    }
+
+    public void setLikelihood(String likelihood){
+        this.likelihood = Double.parseDouble(likelihood.trim());
+    }
+
     public String getName() {
         return name;
     }
@@ -82,7 +103,15 @@ public class Body {
         this.out = out;
     }
 
-    public void setIn(String[] in){
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
+    }
+
+    public void setIn(String... in){
         ArrayList<String> n = new ArrayList<>();
         for(String s: in){
             n.add(s);
@@ -90,7 +119,7 @@ public class Body {
         setIn(n);
     }
 
-    public void setOut(String[] out){
+    public void setOut(String... out){
         ArrayList<String> n = new ArrayList<>();
         for(String s: out){
             n.add(s);

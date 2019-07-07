@@ -11,10 +11,8 @@ import java.util.regex.Pattern;
 public abstract class Command extends AbstractMessageReceivedAction{
 
     public Command(){
-        Body body = new Body();
-        setBody(body);
-        body.getAttributes().add(Attributes.EXECUTE);
-        body.getAttributes().add(Attributes.VANILLA);
+        getBody().getAttributes().add(Attributes.EXECUTE);
+        getBody().getAttributes().add(Attributes.VANILLA);
     }
 
     @Override

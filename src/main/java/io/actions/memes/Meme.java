@@ -25,9 +25,7 @@ public abstract class Meme extends AbstractMessageReceivedAction {
     public abstract void populateMeme();
 
     public Meme(){
-        Body body = new Body();
-        setBody(body);
-        body.getAttributes().add(Attributes.MEME);
+        getBody().getAttributes().add(Attributes.MEME);
     }
 
     protected MemeBody chooseMeme(){
@@ -47,8 +45,20 @@ public abstract class Meme extends AbstractMessageReceivedAction {
 
             memeBody.openImage();
             Graphics g = memeBody.getImage().getGraphics();
+            MemePainter.setMatcher(getMatcher());
+
+
+
             for(TextBody tb: memeBody.getTextBoxes()){
+                ArrayList<String> temp = new ArrayList<>();
+                for(int i = 0; i < tb.getText().size(); i++){
+                    temp.add(tb.getText().get(i));
+                    String str = tb.getText().get(i);
+                    str = applyCaptureAliases(str);
+                    tb.getText().set(i,str);
+                }
                 MemePainter.drawTextBody(memeBody.getImage(),tb,getEvent());
+                tb.setText(temp);
             }
             return true;
         }catch (Exception e){
