@@ -21,10 +21,37 @@ public class Body {
     private boolean on = true;
     private String author = "";
     private String authorId = "";
+    private String guildId = "";
+    private String channelId = "";
+    private boolean global = true;
     private ArrayList<String> in = new ArrayList<String>();
     private ArrayList<String> out = new ArrayList<String>();
     private ArrayList<Attributes> attributes = new ArrayList<Attributes>();
     private double likelihood = 1.0;
+
+    public String getGuildId() {
+        return guildId;
+    }
+
+    public void setGuildId(String guildId) {
+        this.guildId = guildId;
+    }
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
+    }
+
+    public boolean isGlobal() {
+        return global;
+    }
+
+    public void setGlobal(boolean global) {
+        this.global = global;
+    }
 
     public String[] getInAsArray(){
         String[] arr = new String[in.size()];

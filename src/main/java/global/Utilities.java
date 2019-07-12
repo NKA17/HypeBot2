@@ -11,10 +11,21 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utilities {
+
+    public static String getTimeStamp(){
+        SimpleDateFormat sdfDate = new SimpleDateFormat("MM-dd-yyyy @ HH:mm");//dd/MM/yyyy
+        Date now = new Date();
+        String strDate = sdfDate.format(now);
+        return strDate;
+    }
     /**
      * Provide a user id. If the user is a member of the TextChannel, they will
      * be returned

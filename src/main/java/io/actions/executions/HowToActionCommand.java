@@ -33,7 +33,8 @@ public class HowToActionCommand extends Command {
                             "in = [\"one\",\"two\"]\n" +
                             "out = [\"one\",\"two\"]\n" +
                             "description = \"A test\"\n" +
-                            "likelihood = 1.0" +
+                            "likelihood = 1.0\n" +
+                            "scope = guild" +
                             "\n```", true)
                     .addField("Action", "*Action* refers to anything " + App.BOT_NAME + " does. You" +
                             " create all actions the same way, with the exception of a *Meme* action which requires " +
@@ -70,6 +71,13 @@ public class HowToActionCommand extends Command {
                                     "equals 0.75 means I will ignore it 25% of the time.\n" +
                                     "***Default=1.0***\n" +
                                     "Syntax: likelihood = *double*", true)
+                    .addField("***Scope***",
+                            "All actions can be triggered within the same TextChannel they were created in. Setting " +
+                                    "the *scope* to *guild*, will allow them to trigger inside any TextChannel within the " +
+                                    "guild which they were created." +
+                                    "\n" +
+                                    "***Default=guild***\n" +
+                                    "Syntax: scope = *<guild|channel>*", true)
                     .addField("***Aliases***","An important part of utilizing "+App.BOT_NAME+"'s full potential" +
                             " requires *Aliases*. These are functions that "+App.BOT_NAME+" executes on every message he " +
                             "sends to the channel. They replace certain parts of text with global variables. For example, you " +
@@ -86,7 +94,8 @@ public class HowToActionCommand extends Command {
                                     "in = [\"one\",\"two\"]\n" +
                                     "out = [\"one\",\"two\"]\n" +
                                     "description = \"A test\"\n" +
-                                    "likelihood = 1.0" +
+                                    "likelihood = 1.0\n" +
+                                    "scope = guild" +
                                     "\n```");
         }
         return true;

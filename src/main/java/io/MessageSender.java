@@ -3,6 +3,7 @@ package io;
 import global.App;
 import global.Defaults;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import global.MessageUtils;
 import sun.applet.Main;
@@ -47,6 +48,27 @@ public class MessageSender {
     public void sendMessage(String[] messageOptions,boolean applyAliases){
         String message = chooseMessage(messageOptions);
         sendMessage(message,applyAliases);
+    }
+
+    public void sendMessage(String gid, String cid, String message, boolean applyAliases){
+
+        TextChannel tc = App.findChannel(gid,cid);
+        if(tc==null)
+            return;
+        if(!message.matches("http.*")) {
+            if(applyAliases)
+                message = MessageUtils.applyAliases(event,message, App.ALIASES);
+            tc.sendMessage(message).queue();
+        }else {
+            try {
+                EmbedBuilder embed = Defaults.getEmbedBuilder();
+                embed.setImage(message);
+                tc.sendMessage(embed.build()).queue();
+                embed.setImage(message);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
     }
     public void sendMessage(String message, boolean applyAliases){
 

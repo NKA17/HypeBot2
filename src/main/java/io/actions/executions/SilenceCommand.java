@@ -90,6 +90,10 @@ public class SilenceCommand extends Command {
 
                     return sc.execute();
                 }
+
+                public boolean trigger(){
+                    return true;
+                }
             };
             DayChangeAction dca = new DayChangeAction(t);
             Thread th = new Thread(dca);

@@ -2,6 +2,9 @@ package global;
 
 import com.google.gson.Gson;
 import com.sun.org.apache.regexp.internal.RE;
+import cron.CronJob;
+import cron.CronMonitor;
+import cron.WeeklyReminder;
 import enums.Attributes;
 import events.MessageEvent;
 import io.actions.AbstractMessageReceivedAction;
@@ -16,7 +19,10 @@ import io.structure.Body;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.TextChannel;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.awt.*;
 import java.io.File;
@@ -27,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class App {
-    public static final String VERSION = "Beta 1.2.5";
+    public static final String VERSION = "Beta 1.2.6";
     public static String BOT_NAME = "HypeBot";
     public static ArrayList<Alias> ALIASES = new ArrayList<>();
     public static final String BOT_ID = "590356017976573960";
@@ -37,6 +43,9 @@ public class App {
     public static MessageEvent messageEvent;
     public static Font FONT = new Font("Arial Black", Font.BOLD, 20);
     public static int FONT_BORDER_THICKNESS = 2;
+    public static final CronMonitor CRON_MONITOR = new CronMonitor();
+    public static JDA jda;
+    public static boolean TEST_MODE = false;
 
     public static void main(String[] args) throws Exception{
         String name = getArg("--botname",args);
@@ -53,15 +62,30 @@ public class App {
         if(!RESOURCES_PATH.endsWith("/"))
             RESOURCES_PATH+="/";
 
+        String mode = getArg("--mode",args);
+        if(mode==null){
+            TEST_MODE = false;
+        }else{
+            if(mode.equalsIgnoreCase("test"))
+                TEST_MODE = true;
+        }
+
 
         System.out.println(String.format("USING:\n\tPath: %s\n\tBotName: %s",RESOURCES_PATH,BOT_NAME));
-        JDA jda = new JDABuilder("NTkwMzU2MDE3OTc2NTczOTYw.XQhJUw.4cwTnNLXz_fZpIVBmHax6BdPu0k").build();
+        jda = new JDABuilder("NTkwMzU2MDE3OTc2NTczOTYw.XQhJUw.4cwTnNLXz_fZpIVBmHax6BdPu0k").build();
         messageEvent = new MessageEvent();
 
         loadActions();
         loadAliases();
         loadMemes();
         loadResponses();
+        loadWeeklyReminders();
+
+        saveActions();
+        saveAliases();
+        saveMemes();
+        saveResponses();
+
 
         messageEvent.exeActions.add(new SilenceCommand());
         messageEvent.exeActions.add(new SpeakCommand());
@@ -77,6 +101,7 @@ public class App {
         messageEvent.exeActions.add(new HowToEditCommand());
         messageEvent.exeActions.add(new HowToMemeCommand());
         messageEvent.exeActions.add(new ChangeLogCommand());
+        messageEvent.exeActions.add(new CreateReminderCommand());
 
 
         messageEvent.memeActions.add(new GrannyMeme());
@@ -115,6 +140,12 @@ public class App {
                         "you from a distance")));
 
 
+        for(Guild g: jda.getGuilds()){
+            System.out.println(g.getName());
+        }
+
+        Thread cronThread = new Thread(CRON_MONITOR);
+        cronThread.start();
 
     }
 
@@ -168,6 +199,25 @@ public class App {
         }
         saveBodies("aliases.txt",bodies);
     }
+    public static void saveReminders(){
+        try{
+            PrintWriter pw = new PrintWriter(RESOURCES_PATH+"weekly_reminders.txt");
+            Gson gson = new Gson();
+            JSONArray jarr = new JSONArray();
+            while(CRON_MONITOR.isLocked());
+            CRON_MONITOR.lock();
+            for(CronJob cj : CRON_MONITOR.getJobs()){
+                jarr.put(cj.toJSON());
+            }
+            String json = jarr.toString();
+            CRON_MONITOR.unlock();
+            pw.println(json);
+            pw.flush();
+            pw.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
     public static void saveResponses(){
         ArrayList<Body> bodies = new ArrayList<>();
         for(AbstractMessageReceivedAction ar: messageEvent.sendActions){
@@ -193,6 +243,23 @@ public class App {
         }catch (Exception e){
             e.printStackTrace();
             return new ArrayList<Body>();
+        }
+    }
+
+    public static void loadWeeklyReminders(){
+        try{
+            ArrayList<WeeklyReminder> bodies = new ArrayList<>();
+            Gson gson = new Gson();
+            Scanner s = new Scanner(new File(RESOURCES_PATH+"weekly_reminders.txt"));
+            String jarr = s.nextLine();
+            JSONArray arr = new JSONArray(jarr);
+            for(int i = 0; i < arr.length(); i++){
+                WeeklyReminder body = gson.fromJson(arr.getJSONObject(i).toString(),WeeklyReminder.class);
+                CRON_MONITOR.addJob(body);
+            }
+            s.close();
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -234,6 +301,18 @@ public class App {
                 return args[i+1];
         }
 
+        return null;
+    }
+
+    public static TextChannel findChannel(String guildId, String channelId){
+        for(Guild g: jda.getGuilds()){
+            if(g.getId().equalsIgnoreCase(guildId)){
+                for(TextChannel tc: g.getTextChannels()){
+                    if(tc.getId().equalsIgnoreCase(channelId))
+                        return tc;
+                }
+            }
+        }
         return null;
     }
 }

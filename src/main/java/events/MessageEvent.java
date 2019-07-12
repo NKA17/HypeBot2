@@ -58,6 +58,7 @@ public class MessageEvent extends ListenerAdapter {
         ArrayList<AbstractMessageReceivedAction> valid = new ArrayList<>();
         for(AbstractMessageReceivedAction action: list){
 
+
             //build action
             action.setContent(Utilities.consolidateQuotes(event.getMessage().getContentRaw()));
             action.setEvent(event);

@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 public class CreateActionCommand extends Command {
 
     private String name,type,in,out,description,likelihood;
+    private boolean global;
     public CreateActionCommand(){
         super();
         getBody().setDescription("*"+ App.BOT_NAME+", create <meme|action|alias|response> name = \"<name>\".\n"+
@@ -36,6 +37,8 @@ public class CreateActionCommand extends Command {
         body.setDescription(description);
         body.getAttributes().add(Attributes.CUSTOM);
         body.getAttributes().add(Attributes.ACTION);
+        body.setGuildId(getEvent().getGuild().getId());
+        body.setChannelId(getEvent().getChannel().getId());
 
         try{
             double d = Double.parseDouble(likelihood.trim());
@@ -153,6 +156,14 @@ public class CreateActionCommand extends Command {
             //thats ok
         }
 
+        try{
+            Matcher m = Pattern.compile("(scope)(\\s*=\\s*)?\\s*(\")?(?<scope>guild|channel)(\")?").matcher(getContent());
+            m.find();
+            global = m.group("scope").equalsIgnoreCase("guild");
+        }catch (Exception e){
+            global = true;
+            //thats ok
+        }
 
         return true;
     }

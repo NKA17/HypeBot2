@@ -37,16 +37,4 @@ public class DayChangeAction implements Runnable{
 
     }
 
-    public static void main(String[] args){
-        Timeable t = new Timeable() {
-            @Override
-            public boolean execute() {
-                System.out.println("Done!");
-                return true;
-            }
-        };
-        DayChangeAction dca = new DayChangeAction(t);
-        Thread th = new Thread(dca);
-        th.start();
-    }
 }

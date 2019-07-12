@@ -20,7 +20,7 @@ public class TimestampAlias extends Alias {
     public String apply(String str, GuildMessageReceivedEvent event){
         Random rand = new Random();
         for(String alias: getBody().getIn()){
-            str = str.replaceAll(alias, Utilities.makeTimeReadable(event));
+            str = str.replaceAll(alias, Utilities.getTimeStamp());
         }
         return str;
     }

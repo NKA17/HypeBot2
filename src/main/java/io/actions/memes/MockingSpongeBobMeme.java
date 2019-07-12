@@ -21,7 +21,7 @@ public class MockingSpongeBobMeme extends Meme {
         getBody().getAttributes().add(Attributes.VANILLA);
         getBody().getIn().add("^.{5,50}$");
 
-        getBody().setLikelihood(.05);
+        getBody().setLikelihood(.01);
         populateMeme();
     }
     @Override

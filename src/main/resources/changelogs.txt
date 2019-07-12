@@ -19,4 +19,18 @@
     --Turned the hard-coded aliases into built-in aliases.
     --Added a command to access the change logs
     --HypeBot explains Aliases when asked how to create actions
+    --Removed some dumb responses from the PizzaPartyResponse
+    --Made the SpongeBob Mocking Meme .01 likely
+    @f
+@Beta 1.2.8
+    @s
+    #features
+    --Using local timestamp rather than UTC
+    --Created a cron monitor
+    --Created a command to make weekly reminders
+    --Made save/load functions for weekly reminders
+    --can set scope of an action to guild or channel
+    #bugs
+    --Try/catch for Nullpointer coming from Aliases which dont have events due to being loaded from a previous run
+    --called weeklyReminder.setEvent(...) to avoid NullPointers that were being thrown
     @f
