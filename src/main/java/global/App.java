@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class App {
-    public static final String VERSION = "Beta 1.2.6";
+    public static final String VERSION = "Beta 1.3.3";
     public static String BOT_NAME = "HypeBot";
     public static ArrayList<Alias> ALIASES = new ArrayList<>();
     public static final String BOT_ID = "590356017976573960";
@@ -141,7 +141,10 @@ public class App {
 
 
         for(Guild g: jda.getGuilds()){
-            System.out.println(g.getName());
+            System.out.println(g.getName()+", "+g.getId());
+            for(TextChannel tc: g.getTextChannels()){
+                System.out.println("\t"+tc.getName()+", "+tc.getId());
+            }
         }
 
         Thread cronThread = new Thread(CRON_MONITOR);

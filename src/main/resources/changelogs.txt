@@ -22,7 +22,7 @@
     --Removed some dumb responses from the PizzaPartyResponse
     --Made the SpongeBob Mocking Meme .01 likely
     @f
-@Beta 1.2.8
+@Beta 1.3.2
     @s
     #features
     --Using local timestamp rather than UTC
@@ -30,7 +30,20 @@
     --Created a command to make weekly reminders
     --Made save/load functions for weekly reminders
     --can set scope of an action to guild or channel
+    --Actions can only be triggered within the guild they were created
+    --When asking HypeBot to show actions, he only returns the ones for your guild
+    --Users can only remove actions by requesting so from the same guild they were created in
     #bugs
     --Try/catch for Nullpointer coming from Aliases which dont have events due to being loaded from a previous run
     --called weeklyReminder.setEvent(...) to avoid NullPointers that were being thrown
+    @f
+@Beta 1.3.3
+    @s
+    #features
+    --Changed appearance for showing actions
+    --Showing Scope when asked to show actions
+    --Can request to show a specific action
+    --If a name is given for an action to show, and an action is not found with that name, show all actions of that type which contain the provided String in their name
+    #bugs
+    --Action permissions are passed into commands so people can trigger actions without breaking laws so long as the author of all involved actions is consistent
     @f

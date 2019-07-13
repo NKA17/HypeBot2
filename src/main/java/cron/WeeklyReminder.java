@@ -2,6 +2,8 @@ package cron;
 
 import global.DateUtils;
 import io.MessageSender;
+import io.actions.actions.BlankAction;
+import io.structure.Body;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.json.JSONObject;
 
@@ -53,8 +55,13 @@ public class WeeklyReminder extends CronJob {
 
     @Override
     public boolean action() {
-        MessageSender ms = new MessageSender(event);
-        ms.sendMessage(getGuildId(),getChannelId(),message,true);
+
+        BlankAction ba = new BlankAction();
+        Body bo = new Body();
+        bo.setOut(message);
+        ba.setEvent(getEvent());
+        ba.setBody(bo);
+        ba.execute();
         return true;
     }
 

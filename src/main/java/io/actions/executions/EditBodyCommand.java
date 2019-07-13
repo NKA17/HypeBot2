@@ -87,6 +87,12 @@ public class EditBodyCommand extends Command {
             }
 
             if(editBody!=null ){
+                if(getState().containsKey("tempPermission")){
+                    if(!getState().get("tempPermission").toString().equalsIgnoreCase(editBody.getAuthorId())){
+                        sendResponse(MessageUtils.chooseString(MessageUtils.notAllowed));
+                    }
+                    getState().remove("tempPermission");
+                }else
                 if(!Utilities.getOwner(getEvent().getChannel()).getId().equalsIgnoreCase(getEvent().getAuthor().getId()) &&
                         !editBody.getAuthorId().equalsIgnoreCase(getEvent().getAuthor().getId())){
                     sendResponse(MessageUtils.chooseString(MessageUtils.notAllowed));

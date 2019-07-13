@@ -19,6 +19,9 @@ public class BlankAction extends AbstractMessageReceivedAction {
                     sendResponse(step.replaceAll("(?i)^send:", ""));
                 } else if (step.matches("(?i)^(execute|exec|perform):[\\s\\S]*")) {
                     execAction(step.replaceAll("(?i)^(execute|exec|perform):", ""), getEvent());
+                }else{
+                    //Send is the default
+                    sendResponse(step);
                 }
             }
         }catch (Exception e){
@@ -32,6 +35,7 @@ public class BlankAction extends AbstractMessageReceivedAction {
         for(AbstractMessageReceivedAction ar: App.messageEvent.exeActions){
             ar.setContent(App.BOT_NAME+", "+exec);
             ar.setEvent(event);
+            ar.getState().put("tempPermission",getBody().getAuthorId());
             boolean matched = ar.attemptToMatch();
             if(!matched)
                 continue;

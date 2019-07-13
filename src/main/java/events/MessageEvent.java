@@ -66,6 +66,23 @@ public class MessageEvent extends ListenerAdapter {
             boolean matchSuccess = action.attemptToMatch();
 
             if(matchSuccess){
+
+                boolean a = action.getBody().getAttributes().contains(Attributes.VANILLA);
+                boolean b = App.TEST_MODE;
+                boolean c = event.getGuild().getId().equalsIgnoreCase(action.getBody().getGuildId());
+                boolean d = action.getBody().isGlobal();
+                boolean e = action.getBody().getChannelId().equalsIgnoreCase(event.getChannel().getId());
+                if(!a) {
+                    if (!b) {
+                        if (!c) {
+                            continue;
+                        } else {
+                            if (!d && !e) {
+                                continue;
+                            }
+                        }
+                    }
+                }
                 valid.add(action);
                 if(action.getBody().getAttributes().contains(Attributes.EXECUTE))
                     break;
@@ -180,6 +197,14 @@ public class MessageEvent extends ListenerAdapter {
         }else {
             return false;
         }
+    }
+
+    public AbstractMessageReceivedAction getAction(ArrayList<AbstractMessageReceivedAction> list, String name){
+        for(AbstractMessageReceivedAction ar: list){
+            if(ar.getBody().getName().equalsIgnoreCase(name))
+                return ar;
+        }
+        return null;
     }
 
 

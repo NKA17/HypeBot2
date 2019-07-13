@@ -8,6 +8,8 @@ import io.actions.aliases.Alias;
 import io.structure.Body;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ShowBodiesCommand extends Command {
 
@@ -17,11 +19,11 @@ public class ShowBodiesCommand extends Command {
         getBody().setDescription("*"+App.BOT_NAME+", show <custom|built-in|all> <memes|actions|aliases|responses>*" +
                 "\nShows actions.");
         getBody().getIn().add("(show|list|display|tell).*?(?<filter>all|custom|built-in|builtin|built in)" +
-                ".*?(?<type>commands|aliases|responses|actions|memes)");
+                ".*?(?<type>command|alias|response|action|meme)");
         getBody().getIn().add("(show|list|display|tell)" +
-                ".*?(?<type>commands|aliases|responses|actions|memes).*?(?<filter>all|custom|built-in|builtin|built in)");
+                ".*?(?<type>command|alias|response|action|meme).*?(?<filter>all|custom|built-in|builtin|built in)");
         getBody().getIn().add("(show|list|display|tell)" +
-                ".*?(?<type>commands|aliases|responses|actions|memes)");
+                ".*?(?<type>command|alias|response|action|meme)");
     }
     @Override
     public boolean execute(boolean response) {
@@ -59,37 +61,30 @@ public class ShowBodiesCommand extends Command {
         ArrayList<Body> bodies = new ArrayList<>();
         String type = getMatcher().group("type");
         switch (type.toLowerCase()){
-            case "aliases":
-                for(Alias b: App.ALIASES){
-                    if(b.getBody().getAttributes().contains(att))
-                        bodies.add(b.getBody());
-                }
+            case "alias":
+                bodies.addAll(getReturnBodies(getAsBodiesFromAlias(App.ALIASES),att));
                 break;
-            case "responses":
-                for(AbstractMessageReceivedAction b: App.messageEvent.sendActions){
-                    if(b.getBody().getAttributes().contains(att))
-                        bodies.add(b.getBody());
-                }
+            case "response":
+                bodies.addAll(getReturnBodies(getAsBodies(App.messageEvent.sendActions),att));
                 break;
-            case "memes":
-                for(AbstractMessageReceivedAction b: App.messageEvent.memeActions){
-                    if(b.getBody().getAttributes().contains(att))
-                        bodies.add(b.getBody());
-                }
+            case "meme":
+                bodies.addAll(getReturnBodies(getAsBodies(App.messageEvent.memeActions),att));
                 break;
-            case "actions":
-                for(AbstractMessageReceivedAction b: App.messageEvent.performActions){
-                    if(b.getBody().getAttributes().contains(att))
-                        bodies.add(b.getBody());
-                }
+            case "action":
+                bodies.addAll(getReturnBodies(getAsBodies(App.messageEvent.performActions),att));
                 break;
-            case "commands":
-                for(AbstractMessageReceivedAction b: App.messageEvent.exeActions){
-                    if(b.getBody().getAttributes().contains(att))
-                        bodies.add(b.getBody());
-                }
+            case "command":
+                bodies.addAll(getReturnBodies(getAsBodies(App.messageEvent.exeActions),Attributes.VANILLA));
                 break;
         }
+
+        try{
+            Matcher m = Pattern.compile("\"(\\w+)\"").matcher(getContent());
+            if(m.find()){
+                String name = m.group(1);
+                bodies = applyNameFilter(bodies,name);
+            }
+        }catch (Exception e){  }
 
         if(bodies.size()>0)
         populateEmbed(type,filter,bodies);
@@ -104,22 +99,68 @@ public class ShowBodiesCommand extends Command {
         return true;
     }
 
+    private ArrayList<Body> applyNameFilter(ArrayList<Body> list, String name){
+        ArrayList<Body> ret = new ArrayList<>();
+        for(Body b: list){
+            if(b.getName().toLowerCase().contains(name.toLowerCase()))
+                ret.add(b);
+        }
+        return ret;
+    }
     private void populateEmbed(String type, String filter,ArrayList<Body> bodies){
         getEmbed().setTitle(Character.toUpperCase(type.charAt(0))+type.toLowerCase().substring(1));
         getEmbed().setDescription(
                 "Showing "+filter.toLowerCase()+" "+type.toLowerCase()+".");
         for(Body b: bodies){
             if(b.getAttributes().contains(Attributes.EXECUTE)){
-                getEmbed().addField(b.getName(),
-                        "*by " + b.getAuthor() + "* \n**Description** = \"" + b.getDescription()
+                getEmbed().addField("**"+b.getName()+"**",
+                        "*by " + b.getAuthor() + "*\n``` \nDescription = \"" + b.getDescription()+"\n ```"
                         , true);
             }else {
-                getEmbed().addField(b.getName(),
-                        "*by " + b.getAuthor() + "* \n**Description** = \"" + b.getDescription() +
-                                "\"\n**In** = " + b.getIn() + "\n**Out** = " + b.getOut() + "\n**Likelihood** = " + b.getLikelihood()
-                        , true);
+                getEmbed().addField("**"+b.getName()+"**",
+                        "*by " + b.getAuthor() + "* \n```\nDescription = \"" + b.getDescription() +
+                                "\"\nIn = " + b.getIn() + "\nOut = " + b.getOut() + "\nLikelihood = " + b.getLikelihood()
+                                +"\nScope = "+(b.isGlobal()?"GUILD":"CHANNEL")+"\n```", true);
             }
         }
     }
 
+    private ArrayList<Body> getAsBodiesFromAlias(ArrayList<Alias> list){
+        ArrayList<Body> ret = new ArrayList<>();
+        for(Alias ar: list){
+            ret.add(ar.getBody());
+        }
+
+        return ret;
+    }
+    private ArrayList<Body> getAsBodies(ArrayList<AbstractMessageReceivedAction> list){
+        ArrayList<Body> ret = new ArrayList<>();
+        for(AbstractMessageReceivedAction ar: list){
+            ret.add(ar.getBody());
+        }
+
+        return ret;
+    }
+
+    private ArrayList<Body> getReturnBodies(ArrayList<Body> list, Attributes att){
+        ArrayList<Body> ret = new ArrayList<>();
+        for(Body b: list) {
+            boolean f = App.TEST_MODE;
+            boolean c = getEvent().getGuild().getId().equalsIgnoreCase(b.getGuildId());
+            boolean d = b.isGlobal();
+            boolean e = b.getChannelId().equalsIgnoreCase(getEvent().getChannel().getId());
+                if (!f) {
+                    if (!c) {
+                        continue;
+                    } else {
+                        if (!d && !e) {
+                            continue;
+                        }
+                    }
+                }
+            if (b.getAttributes().contains(att))
+                ret.add(b);
+        }
+        return ret;
+    }
 }

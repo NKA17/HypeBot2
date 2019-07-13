@@ -1,7 +1,9 @@
 package io.actions.executions;
 
+import enums.Attributes;
 import global.App;
 import global.MessageUtils;
+import io.actions.AbstractMessageReceivedAction;
 
 public class RemoveActionCommand extends Command {
 
@@ -34,6 +36,8 @@ public class RemoveActionCommand extends Command {
                 }
                 break;
             case "response":
+                AbstractMessageReceivedAction ar = App.messageEvent.getAction(App.messageEvent.sendActions,name);
+                if(ar==null || !canDelete(ar))return false;
                 if(App.messageEvent.removeSendAction(name)) {
                     worked = true;
                     App.saveResponses();
@@ -76,6 +80,22 @@ public class RemoveActionCommand extends Command {
         }
     }
 
+    private boolean canDelete(AbstractMessageReceivedAction ar){
+        boolean b = App.TEST_MODE;
+        boolean c = getEvent().getGuild().getId().equalsIgnoreCase(ar.getBody().getGuildId());
+        boolean d = ar.getBody().isGlobal();
+        boolean e = ar.getBody().getChannelId().equalsIgnoreCase(getEvent().getChannel().getId());
+        if (!b) {
+            if (!c) {
+                return false;
+            } else {
+                if (!d && !e) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     @Override
     public boolean build() {
         return true;

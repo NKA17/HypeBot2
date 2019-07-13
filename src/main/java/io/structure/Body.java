@@ -21,8 +21,8 @@ public class Body {
     private boolean on = true;
     private String author = "";
     private String authorId = "";
-    private String guildId = "";
-    private String channelId = "";
+    private String guildId = "524035064523259924";
+    private String channelId = "524035064523259926";
     private boolean global = true;
     private ArrayList<String> in = new ArrayList<String>();
     private ArrayList<String> out = new ArrayList<String>();
