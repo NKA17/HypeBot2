@@ -1,11 +1,17 @@
 package io.actions.actions;
 
+import enums.Attributes;
 import global.App;
 import io.actions.AbstractMessageReceivedAction;
 import io.actions.executions.Command;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class BlankAction extends AbstractMessageReceivedAction {
+    public BlankAction(){
+        super();
+        getBody().getAttributes().add(Attributes.PERFORM);
+    }
+
     @Override
     public boolean build() {
         return true;
@@ -16,12 +22,12 @@ public class BlankAction extends AbstractMessageReceivedAction {
         try{
             for(String step: getBody().getOut()) {
                 if (step.matches("(?i)^send:[\\s\\S]*")) {
-                    sendResponse(step.replaceAll("(?i)^send:", ""));
+                    sendResponse(getBody().getGuildId(),getBody().getChannelId(),step.replaceAll("(?i)^send:", ""));
                 } else if (step.matches("(?i)^(execute|exec|perform):[\\s\\S]*")) {
                     execAction(step.replaceAll("(?i)^(execute|exec|perform):", ""), getEvent());
                 }else{
                     //Send is the default
-                    sendResponse(step);
+                    sendResponse(getBody().getGuildId(),getBody().getChannelId(),step);
                 }
             }
         }catch (Exception e){

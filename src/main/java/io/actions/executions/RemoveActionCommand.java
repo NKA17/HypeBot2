@@ -1,9 +1,14 @@
 package io.actions.executions;
 
+import com.sun.deploy.ui.UITextArea;
 import enums.Attributes;
 import global.App;
 import global.MessageUtils;
+import global.Utilities;
+import hypebot.HypeBotContext;
 import io.actions.AbstractMessageReceivedAction;
+import io.actions.aliases.Alias;
+import io.structure.Body;
 
 public class RemoveActionCommand extends Command {
 
@@ -28,39 +33,56 @@ public class RemoveActionCommand extends Command {
             type = "null";
 
         boolean worked = false;
+        HypeBotContext hbc;
+        AbstractMessageReceivedAction ar;
         switch (type){
             case "alias":
-                if(App.messageEvent.removeAlias(name)) {
+                hbc = App.HYPEBOT.getContext(getEvent());
+                Alias a = hbc.getAlias(name,Attributes.CUSTOM);
+                if(a==null || !canDelete(a.getBody()))return false;
+                if(hbc.getAliases().remove(a)) {
                     worked = true;
-                    App.saveAliases();
+                    App.HYPEBOT.saveAliases();
                 }
                 break;
             case "response":
-                AbstractMessageReceivedAction ar = App.messageEvent.getAction(App.messageEvent.sendActions,name);
-                if(ar==null || !canDelete(ar))return false;
-                if(App.messageEvent.removeSendAction(name)) {
+                hbc = App.HYPEBOT.getContext(getEvent());
+                ar = hbc.getAction(name,Attributes.SEND,Attributes.CUSTOM);
+                if(ar==null || !canDelete(ar.getBody()))return false;
+                if(hbc.getActions().remove(ar)) {
                     worked = true;
-                    App.saveResponses();
+                    App.HYPEBOT.saveResponses();
                 }
                 break;
             case "action":
-                if(App.messageEvent.removeActionAction(name)) {
+                hbc = App.HYPEBOT.getContext(getEvent());
+                ar = hbc.getAction(name,Attributes.PERFORM,Attributes.CUSTOM);
+                if(ar==null || !canDelete(ar.getBody()))return false;
+                if(hbc.getActions().remove(ar)) {
                     worked = true;
-                    App.saveActions();
+                    App.HYPEBOT.saveActions();
                 }
                 break;
             case "Meme":
-                if(App.messageEvent.removeMemeAction(name)){
+                hbc = App.HYPEBOT.getContext(getEvent());
+                ar = hbc.getAction(name,Attributes.MEME,Attributes.CUSTOM);
+                if(ar==null || !canDelete(ar.getBody()))return false;
+                if(hbc.getActions().remove(ar)) {
                     worked = true;
-                    App.saveMemes();
+                    App.HYPEBOT.saveMemes();
                 }
             case "null":
-                if(App.messageEvent.removeAny(name)) {
+                hbc = App.HYPEBOT.getContext(getEvent());
+                ar = hbc.getAction(name,Attributes.CUSTOM);
+                if(ar!=null) {
                     worked = true;
-                    App.saveMemes();
-                    App.saveActions();
-                    App.saveAliases();
-                    App.saveResponses();
+                    App.HYPEBOT.saveMemes();
+                    App.HYPEBOT.saveActions();
+                    App.HYPEBOT.saveResponses();
+                }else{
+                    Alias ab = hbc.getAlias(name,Attributes.CUSTOM);
+                    hbc.getAliases().remove(ab);
+                    App.HYPEBOT.saveAliases();
                 }
                 break;
         }
@@ -80,21 +102,10 @@ public class RemoveActionCommand extends Command {
         }
     }
 
-    private boolean canDelete(AbstractMessageReceivedAction ar){
-        boolean b = App.TEST_MODE;
-        boolean c = getEvent().getGuild().getId().equalsIgnoreCase(ar.getBody().getGuildId());
-        boolean d = ar.getBody().isGlobal();
-        boolean e = ar.getBody().getChannelId().equalsIgnoreCase(getEvent().getChannel().getId());
-        if (!b) {
-            if (!c) {
-                return false;
-            } else {
-                if (!d && !e) {
-                    return false;
-                }
-            }
-        }
-        return true;
+    private boolean canDelete(Body ar){
+
+        return ar.getAuthorId().equalsIgnoreCase(getEvent().getAuthor().getId()) ||
+                getEvent().getAuthor().getId().equalsIgnoreCase(Utilities.getOwner(getEvent().getChannel()).getId());
     }
     @Override
     public boolean build() {

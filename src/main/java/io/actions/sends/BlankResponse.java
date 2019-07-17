@@ -1,13 +1,16 @@
-package io.actions;
+package io.actions.sends;
 
+import enums.Attributes;
+import io.actions.AbstractMessageReceivedAction;
 import io.structure.Body;
 import io.MessageSender;
 
-public class SendAction extends AbstractMessageReceivedAction {
+public class BlankResponse extends AbstractMessageReceivedAction {
 
 
-    public SendAction(Body body) {
-        super(body);
+    public BlankResponse() {
+        super();
+        getBody().getAttributes().add(Attributes.SEND);
     }
 
     @Override

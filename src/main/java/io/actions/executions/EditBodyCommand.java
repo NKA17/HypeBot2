@@ -4,6 +4,7 @@ import enums.Attributes;
 import global.App;
 import global.MessageUtils;
 import global.Utilities;
+import hypebot.HypeBotContext;
 import io.actions.AbstractMessageReceivedAction;
 import io.actions.aliases.Alias;
 import io.structure.Body;
@@ -33,10 +34,10 @@ public class EditBodyCommand extends Command {
     public boolean execute(boolean response) {
 
         edit(editBody,action,field,value);
-        App.saveAliases();
-        App.saveResponses();
-        App.saveActions();
-        App.saveMemes();
+        App.HYPEBOT.saveAliases();
+        App.HYPEBOT.saveResponses();
+        App.HYPEBOT.saveActions();
+        App.HYPEBOT.saveMemes();
 
         if(response)
             sendResponse();
@@ -66,25 +67,35 @@ public class EditBodyCommand extends Command {
 
             type = getMatcher().group("type");
             editBody = null;
+            HypeBotContext hbc = App.HYPEBOT.getContexts().get(getEvent().getGuild().getId());
             if(type==null)
                 type = "null";
-            switch (type.toLowerCase()){
-                case "meme":
-                    editBody = App.messageEvent.getMemeAction( name);
-                    break;
-                case "action":
-                    editBody = App.messageEvent.getActionAction(name);
-                    break;
-                case "response":
-                    editBody = App.messageEvent.getSendAction(name);
-                    break;
-                case "alias":
-                    editBody = App.messageEvent.getAlias(name);
-                    break;
-                default:
-                    editBody = App.messageEvent.getAny(name);
-                    break;
-            }
+            try {
+                switch (type.toLowerCase()) {
+                    case "meme":
+                        editBody = hbc.getAction(name, Attributes.MEME).getBody();
+                        break;
+                    case "action":
+                        editBody = hbc.getAction(name, Attributes.PERFORM).getBody();
+                        break;
+                    case "response":
+                        editBody = hbc.getAction(name, Attributes.SEND).getBody();
+                        break;
+                    case "alias":
+                        editBody = hbc.getAlias(name).getBody();
+                        break;
+                    default:
+                        AbstractMessageReceivedAction ar = hbc.getAction(name);
+                        if (ar != null) {
+                            editBody = ar.getBody();
+                            break;
+                        }
+                        Alias al = hbc.getAlias(name);
+                        if (al != null)
+                            editBody = al.getBody();
+                        break;
+                }
+            }catch (Exception e){}
 
             if(editBody!=null ){
                 if(getState().containsKey("tempPermission")){

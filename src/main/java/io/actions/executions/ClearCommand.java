@@ -14,7 +14,7 @@ public class ClearCommand extends Command {
         getBody().setDescription("*"+ App.BOT_NAME+", clear <meme|action|response|alias|all>.*" +
                 "\nRemoves all custom built actions of the specified type.");
         getBody().getIn().add("(clear|empty|reset|remove|delete).*?(?<type>(meme|action|response|alias|all|every))(\\w*$)");
-        getBody().getIn().add("(clear|empty|reset|remove|delete)");
+        //getBody().getIn().add("(clear|empty|reset|remove|delete) (all|everything)$");
         getBody().setOut(MessageUtils.affirmative);
         getBody().setName("ClearCommand");
     }

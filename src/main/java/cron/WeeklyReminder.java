@@ -60,6 +60,8 @@ public class WeeklyReminder extends CronJob {
         Body bo = new Body();
         bo.setOut(message);
         ba.setEvent(getEvent());
+        bo.setGuildId(getGuildId());
+        bo.setChannelId(getChannelId());
         ba.setBody(bo);
         ba.execute();
         return true;

@@ -7,12 +7,13 @@ import cron.CronMonitor;
 import cron.WeeklyReminder;
 import enums.Attributes;
 import events.MessageEvent;
+import hypebot.HypeBot;
 import io.actions.AbstractMessageReceivedAction;
-import io.actions.SendAction;
 import io.actions.actions.BlankAction;
 import io.actions.aliases.*;
 import io.actions.executions.*;
 import io.actions.memes.*;
+import io.actions.sends.BlankResponse;
 import io.actions.sends.ChuckNorrisResponse;
 import io.actions.sends.PizzaPartyResponse;
 import io.structure.Body;
@@ -33,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class App {
-    public static final String VERSION = "Beta 1.3.3";
+    public static final String VERSION = "Beta 1.3.5";
     public static String BOT_NAME = "HypeBot";
     public static ArrayList<Alias> ALIASES = new ArrayList<>();
     public static final String BOT_ID = "590356017976573960";
@@ -46,6 +47,7 @@ public class App {
     public static final CronMonitor CRON_MONITOR = new CronMonitor();
     public static JDA jda;
     public static boolean TEST_MODE = false;
+    public static HypeBot HYPEBOT = new HypeBot();
 
     public static void main(String[] args) throws Exception{
         String name = getArg("--botname",args);
@@ -75,53 +77,49 @@ public class App {
         jda = new JDABuilder("NTkwMzU2MDE3OTc2NTczOTYw.XQhJUw.4cwTnNLXz_fZpIVBmHax6BdPu0k").build();
         messageEvent = new MessageEvent();
 
-        loadActions();
-        loadAliases();
-        loadMemes();
-        loadResponses();
-        loadWeeklyReminders();
-
-        saveActions();
-        saveAliases();
-        saveMemes();
-        saveResponses();
-
-
-        messageEvent.exeActions.add(new SilenceCommand());
-        messageEvent.exeActions.add(new SpeakCommand());
-        messageEvent.exeActions.add(new CheckInCommand());
-        messageEvent.exeActions.add(new HelpCommand());
-        messageEvent.exeActions.add(new EditBodyCommand());
-        messageEvent.exeActions.add(new CreateActionCommand());
-        messageEvent.exeActions.add(new RemoveActionCommand());
-        messageEvent.exeActions.add(new ShowBodiesCommand());
-        messageEvent.exeActions.add(new HowToActionCommand());
-        messageEvent.exeActions.add(new ClearCommand());
-        messageEvent.exeActions.add(new IntroduceCommand());
-        messageEvent.exeActions.add(new HowToEditCommand());
-        messageEvent.exeActions.add(new HowToMemeCommand());
-        messageEvent.exeActions.add(new ChangeLogCommand());
-        messageEvent.exeActions.add(new CreateReminderCommand());
-
-
-        messageEvent.memeActions.add(new GrannyMeme());
-        messageEvent.memeActions.add(new MockingSpongeBobMeme());
-        messageEvent.memeActions.add(new CoolsvilleB());
-        messageEvent.memeActions.add(new CoolsvilleA());
-        messageEvent.memeActions.add(new KKK());
-        messageEvent.memeActions.add(new PizzaPartyMeme());
-        messageEvent.memeActions.add(new ButterflyMeme());
-        messageEvent.memeActions.add(new IsNotAMeme());
-
-        messageEvent.sendActions.add(new PizzaPartyResponse());
-        messageEvent.sendActions.add(new ChuckNorrisResponse());
-
-        App.ALIASES.add(new AuthorAlias());
-        App.ALIASES.add(new ChannelAlias());
-        App.ALIASES.add(new GuildAlias());
-        App.ALIASES.add(new OwnerAlias());
-        App.ALIASES.add(new TimestampAlias());
-
+//        loadActions();
+//        loadAliases();
+//        loadMemes();
+//        loadResponses();
+//        loadWeeklyReminders();
+//
+//
+//
+//        messageEvent.exeActions.add(new SilenceCommand());
+//        messageEvent.exeActions.add(new SpeakCommand());
+//        messageEvent.exeActions.add(new CheckInCommand());
+//        messageEvent.exeActions.add(new HelpCommand());
+//        messageEvent.exeActions.add(new EditBodyCommand());
+//        messageEvent.exeActions.add(new CreateActionCommand());
+//        messageEvent.exeActions.add(new RemoveActionCommand());
+//        messageEvent.exeActions.add(new ShowBodiesCommand());
+//        messageEvent.exeActions.add(new HowToActionCommand());
+//        messageEvent.exeActions.add(new ClearCommand());
+//        messageEvent.exeActions.add(new IntroduceCommand());
+//        messageEvent.exeActions.add(new HowToEditCommand());
+//        messageEvent.exeActions.add(new HowToMemeCommand());
+//        messageEvent.exeActions.add(new ChangeLogCommand());
+//        messageEvent.exeActions.add(new CreateReminderCommand());
+//
+//
+//        messageEvent.memeActions.add(new GrannyMeme());
+//        messageEvent.memeActions.add(new MockingSpongeBobMeme());
+//        messageEvent.memeActions.add(new CoolsvilleB());
+//        messageEvent.memeActions.add(new CoolsvilleA());
+//        messageEvent.memeActions.add(new KKK());
+//        messageEvent.memeActions.add(new PizzaPartyMeme());
+//        messageEvent.memeActions.add(new ButterflyMeme());
+//        messageEvent.memeActions.add(new IsNotAMeme());
+//
+//        messageEvent.sendActions.add(new PizzaPartyResponse());
+//        messageEvent.sendActions.add(new ChuckNorrisResponse());
+//
+//        App.ALIASES.add(new AuthorAlias());
+//        App.ALIASES.add(new ChannelAlias());
+//        App.ALIASES.add(new GuildAlias());
+//        App.ALIASES.add(new OwnerAlias());
+//        App.ALIASES.add(new TimestampAlias());
+//
 
         jda.addEventListener(messageEvent);
 
@@ -138,6 +136,10 @@ public class App {
                         "you read your phone",
                         "you watching him",
                         "you from a distance")));
+
+
+        HYPEBOT.loadUserMade();
+        HYPEBOT.loadGlobals();
 
 
         for(Guild g: jda.getGuilds()){
@@ -293,7 +295,8 @@ public class App {
     public static void loadResponses(){
         ArrayList<Body> bodies = loadBodies("responses.txt");
         for(Body b: bodies){
-            SendAction send = new SendAction(b);
+            BlankResponse send = new BlankResponse();
+            send.setBody(b);
             messageEvent.sendActions.add(send);
         }
     }

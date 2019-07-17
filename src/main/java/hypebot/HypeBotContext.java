@@ -1,6 +1,7 @@
 package hypebot;
 
 import cron.CronJob;
+import enums.Attributes;
 import global.Utilities;
 import io.actions.AbstractMessageReceivedAction;
 import io.actions.aliases.Alias;
@@ -59,8 +60,36 @@ public class HypeBotContext {
         }
     }
 
+    public Alias getAlias(String name,Attributes... atts){
+        for(Alias ar: getAliases()){
+            if(ar.getBody().getName().equalsIgnoreCase(name)){
+                boolean has = true;
+                for(Attributes a: atts){
+                    has = has && ar.getBody().getAttributes().contains(a);
+                }
+                if(has)
+                    return ar;
+            }
+        }
+        return null;
+    }
+
+    public AbstractMessageReceivedAction getAction(String name, Attributes... atts){
+        for(AbstractMessageReceivedAction ar: getActions()){
+            if(ar.getBody().getName().equalsIgnoreCase(name)){
+                boolean has = true;
+                for(Attributes a: atts){
+                    has = has && ar.getBody().getAttributes().contains(a);
+                }
+                if(has)
+                    return ar;
+            }
+        }
+        return null;
+    }
+
     public boolean runActions(GuildMessageReceivedEvent event){
-        ArrayList<AbstractMessageReceivedAction> valid = run(event,commands,false);
+        ArrayList<AbstractMessageReceivedAction> valid = run(event,actions,false);
         if(valid.size()>0){
             execute(valid);
             return true;

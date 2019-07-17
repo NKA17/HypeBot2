@@ -116,6 +116,14 @@ public abstract class AbstractMessageReceivedAction {
 
         return true;
     }
+    public boolean sendResponse(String guildid, String channelid, String str){
+        MessageSender ms = new MessageSender(getEvent());
+
+        str = applyCaptureAliases(str);
+
+        ms.sendMessage(guildid,channelid,str,true);
+        return true;
+    }
     public boolean sendResponse(String str){
         MessageSender ms = new MessageSender(getEvent());
 

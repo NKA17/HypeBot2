@@ -3,6 +3,8 @@ package io.actions.executions;
 import enums.Attributes;
 import global.App;
 import global.MessageUtils;
+import hypebot.HypeBot;
+import hypebot.HypeBotContext;
 import io.actions.AbstractMessageReceivedAction;
 import io.actions.aliases.Alias;
 import io.structure.Body;
@@ -60,21 +62,22 @@ public class ShowBodiesCommand extends Command {
 
         ArrayList<Body> bodies = new ArrayList<>();
         String type = getMatcher().group("type");
+        HypeBotContext hbc = App.HYPEBOT.getContexts().get(getEvent().getGuild().getId());
         switch (type.toLowerCase()){
             case "alias":
-                bodies.addAll(getReturnBodies(getAsBodiesFromAlias(App.ALIASES),att));
+                bodies.addAll(getReturnBodies(getAsBodiesFromAlias(hbc.getAliases()),att));
                 break;
             case "response":
-                bodies.addAll(getReturnBodies(getAsBodies(App.messageEvent.sendActions),att));
+                bodies.addAll(getReturnBodies(getAsBodies(hbc.getActions()),att,Attributes.SEND));
                 break;
             case "meme":
-                bodies.addAll(getReturnBodies(getAsBodies(App.messageEvent.memeActions),att));
+                bodies.addAll(getReturnBodies(getAsBodies(hbc.getActions()),att,Attributes.MEME));
                 break;
             case "action":
-                bodies.addAll(getReturnBodies(getAsBodies(App.messageEvent.performActions),att));
+                bodies.addAll(getReturnBodies(getAsBodies(hbc.getActions()),att,Attributes.PERFORM));
                 break;
             case "command":
-                bodies.addAll(getReturnBodies(getAsBodies(App.messageEvent.exeActions),Attributes.VANILLA));
+                bodies.addAll(getReturnBodies(getAsBodies(hbc.getCommands()),Attributes.VANILLA));
                 break;
         }
 
@@ -91,7 +94,7 @@ public class ShowBodiesCommand extends Command {
         else {
             sendResponse(MessageUtils.chooseString("None on file.", "You don't have any.",
                     "You should make some, first. Then, I can show you what you made.",
-                    "What "+type+"?"));
+                    "What "+type+"?","This is awkward. Uh... there aren't any."));
             return false;
         }
 
@@ -142,23 +145,14 @@ public class ShowBodiesCommand extends Command {
         return ret;
     }
 
-    private ArrayList<Body> getReturnBodies(ArrayList<Body> list, Attributes att){
+    private ArrayList<Body> getReturnBodies(ArrayList<Body> list, Attributes... att){
         ArrayList<Body> ret = new ArrayList<>();
         for(Body b: list) {
-            boolean f = App.TEST_MODE;
-            boolean c = getEvent().getGuild().getId().equalsIgnoreCase(b.getGuildId());
-            boolean d = b.isGlobal();
-            boolean e = b.getChannelId().equalsIgnoreCase(getEvent().getChannel().getId());
-                if (!f) {
-                    if (!c) {
-                        continue;
-                    } else {
-                        if (!d && !e) {
-                            continue;
-                        }
-                    }
-                }
-            if (b.getAttributes().contains(att))
+            boolean has = true;
+            for(Attributes a: att){
+                has = has && b.getAttributes().contains(a);
+            }
+            if(has)
                 ret.add(b);
         }
         return ret;

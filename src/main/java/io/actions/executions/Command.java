@@ -2,6 +2,7 @@ package io.actions.executions;
 
 import enums.Attributes;
 import global.App;
+import global.Defaults;
 import io.structure.Body;
 import io.actions.AbstractMessageReceivedAction;
 
@@ -15,6 +16,10 @@ public abstract class Command extends AbstractMessageReceivedAction{
         getBody().getAttributes().add(Attributes.VANILLA);
     }
 
+    public boolean prebuild(){
+        setEmbed(Defaults.getEmbedBuilder());
+        return true;
+    }
     @Override
     /**
      * Attempts to find a match with the Body's regex

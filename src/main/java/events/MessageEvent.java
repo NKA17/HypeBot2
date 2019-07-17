@@ -6,9 +6,12 @@ import global.App;
 import global.Defaults;
 import global.MessageUtils;
 import global.Utilities;
+import io.MessageSender;
 import io.actions.AbstractMessageReceivedAction;
 import io.actions.aliases.Alias;
+import io.actions.executions.CheckInCommand;
 import io.structure.Body;
+import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.json.JSONArray;
@@ -36,23 +39,37 @@ public class MessageEvent extends ListenerAdapter {
 
     private boolean commandIssued = false;
 
+
+
     public void onGuildMessageReceived(GuildMessageReceivedEvent event){
-        if(event.getAuthor().getId().equalsIgnoreCase(App.BOT_ID))
-            return;
-
-//
-//        if(event.getGuild().getId().equalsIgnoreCase("524035064523259924"))
-//            return;
-        commandIssued = false;
-
-        ArrayList<AbstractMessageReceivedAction> all = new ArrayList<>();
-        for(ArrayList<AbstractMessageReceivedAction> list: allActions){
-            all.addAll(list);
-        }
-
-        runList(all,event);
-
+        if(!App.BOT_ID.equalsIgnoreCase(event.getAuthor().getId()))
+            App.HYPEBOT.respondToEvent(event);
     }
+
+    public void onGuildJoin(GuildJoinEvent event){
+        App.HYPEBOT.createHypeBotContext(event.getGuild().getId());
+        MessageSender ms = new MessageSender();
+        String message = MessageUtils.chooseString(CheckInCommand.getTestResponses());
+        ms.sendMessage(event.getGuild().getId(),event.getGuild().getTextChannels().get(0).getId(),
+                message,true);
+    }
+
+//        if(event.getAuthor().getId().equalsIgnoreCase(App.BOT_ID))
+//            return;
+//
+////
+////        if(event.getGuild().getId().equalsIgnoreCase("524035064523259924"))
+////            return;
+//        commandIssued = false;
+//
+//        ArrayList<AbstractMessageReceivedAction> all = new ArrayList<>();
+//        for(ArrayList<AbstractMessageReceivedAction> list: allActions){
+//            all.addAll(list);
+//        }
+//
+//        runList(all,event);
+//
+//    }
 
     public void runList(ArrayList<AbstractMessageReceivedAction> list,GuildMessageReceivedEvent event){
         ArrayList<AbstractMessageReceivedAction> valid = new ArrayList<>();

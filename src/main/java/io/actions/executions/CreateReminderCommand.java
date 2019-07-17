@@ -5,6 +5,7 @@ import cron.WeeklyReminder;
 import global.App;
 import global.DateUtils;
 import global.MessageUtils;
+import hypebot.HypeBotContext;
 import io.MessageSender;
 
 import java.util.Calendar;
@@ -36,9 +37,10 @@ public class CreateReminderCommand extends Command {
         cj.setTime(time);
         cj.setMessage(phrase);
 
-        App.CRON_MONITOR.addJob(cj);
+        HypeBotContext hbc = App.HYPEBOT.getContexts().get(getEvent().getGuild().getId());
+        hbc.getJobs().add(cj);
 
-        App.saveReminders();
+        App.HYPEBOT.saveCronJobs();
         sendResponse(MessageUtils.affirmative);
         return true;
     }

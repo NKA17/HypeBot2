@@ -1,0 +1,1 @@
+[{"name":"Reminder","time":"2056","message":"This is working","guildId":"590356976806920192","day":3,"channelId":"590356976806920194"}]

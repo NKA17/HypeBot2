@@ -2,6 +2,7 @@ package io;
 
 import global.App;
 import global.Defaults;
+import hypebot.HypeBotContext;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -21,6 +22,8 @@ public class MessageSender {
     public MessageSender(GuildMessageReceivedEvent event){
         this.event = event;
     }
+
+    public MessageSender(){}
 
 
 
@@ -56,8 +59,10 @@ public class MessageSender {
         if(tc==null)
             return;
         if(!message.matches("http.*")) {
-            if(applyAliases)
-                message = MessageUtils.applyAliases(event,message, App.ALIASES);
+            if(applyAliases) {
+                HypeBotContext hbc = App.HYPEBOT.getContext(gid);
+                message = MessageUtils.applyAliases(event, message, hbc.getAliases());
+            }
             tc.sendMessage(message).queue();
         }else {
             try {
@@ -73,8 +78,10 @@ public class MessageSender {
     public void sendMessage(String message, boolean applyAliases){
 
         if(!message.matches("http.*")) {
-            if(applyAliases)
-                message = MessageUtils.applyAliases(event,message, App.ALIASES);
+            if(applyAliases) {
+                HypeBotContext hbc = App.HYPEBOT.getContext(getEvent().getGuild().getId());
+                message = MessageUtils.applyAliases(event, message, hbc.getAliases());
+            }
             event.getChannel().sendMessage(message).queue();
         }else {
             try {

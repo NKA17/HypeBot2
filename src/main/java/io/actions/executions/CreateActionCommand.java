@@ -3,8 +3,9 @@ package io.actions.executions;
 import enums.Attributes;
 import global.App;
 import global.MessageUtils;
+import hypebot.HypeBotContext;
 import io.actions.AbstractMessageReceivedAction;
-import io.actions.SendAction;
+import io.actions.sends.BlankResponse;
 import io.actions.actions.BlankAction;
 import io.actions.aliases.Alias;
 import io.structure.Body;
@@ -57,6 +58,7 @@ public class CreateActionCommand extends Command {
                 body.getIn().add(arr.getString(i));
             }
         }catch (Exception e){
+            if(in!=null)
             body.getIn().add(in);
         }
 
@@ -66,31 +68,39 @@ public class CreateActionCommand extends Command {
                 body.getOut().add(arr.getString(i));
             }
         }catch (Exception e){
+            if(out!=null)
             body.getOut().add(out);
         }
 
+        String id = getEvent().getGuild().getId();
         //response|alias|action
         AbstractMessageReceivedAction action;
         switch (type){
             case "response":
-                action = new SendAction(body);
-                App.messageEvent.sendActions.add(action);
-                App.saveResponses();
+                body.getAttributes().add(Attributes.SEND);
+                action = new BlankResponse();
+                action.setBody(body);
+                HypeBotContext hbc = App.HYPEBOT.getContexts().get(id);
+                hbc.getActions().add(action);
+                App.HYPEBOT.saveResponses();
                 break;
             case "alias":
+                body.getAttributes().add(Attributes.ALIAS);
                 Alias alias = new Alias();
                 alias.setBody(body);
-                App.ALIASES.add(alias);
-                App.saveAliases();
+                App.HYPEBOT.getContexts().get(id).getAliases().add(alias);
+                App.HYPEBOT.saveAliases();
                 break;
             case "action":
+                body.getAttributes().add(Attributes.ACTION);
                 BlankAction ba = new BlankAction();
                 ba.setBody(body);
-                App.messageEvent.performActions.add(ba);
-                App.saveActions();
+                App.HYPEBOT.getContexts().get(id).getActions().add(ba);
+                App.HYPEBOT.saveActions();
                 break;
 
             case "meme":
+                body.getAttributes().add(Attributes.MEME);
                 sendResponse("Sorry, that's still in progress. But you can make something else!");
                 return false;
 

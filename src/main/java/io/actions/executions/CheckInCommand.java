@@ -5,7 +5,7 @@ import io.structure.Body;
 
 public class CheckInCommand extends Command {
 
-    private String[] testResponses = new String[]{
+    private static String[] testResponses = new String[]{
             "https://i.ytimg.com/vi/OhMXQ360aiA/maxresdefault.jpg",
             "https://pbs.twimg.com/profile_images/653700295395016708/WjGTnKGQ_400x400.png",
             "I'm awake!","Present!","Did you need something?","HypeBot here. ",
@@ -13,8 +13,10 @@ public class CheckInCommand extends Command {
             "Oh, am I relevant again?","I was just taking a break.","I was here the whole time.",
             "Uh... yea?","Hi, #auth!","Hello! From a dedicated server!", "I have achieved minimun viability!",
             "How long was I out?","Tell Apple to stop acting like a child and switch back to UTF-16.",
-            "***FYI***, I know basically every Chuck Norris 'Fact'."
+            "***FYI***, I know basically every Chuck Norris 'Fact'.","I take requests!"
     };
+
+
 
     public CheckInCommand() {
         super();
@@ -36,4 +38,7 @@ public class CheckInCommand extends Command {
         return true;
     }
 
+    public static String[] getTestResponses() {
+        return testResponses;
+    }
 }

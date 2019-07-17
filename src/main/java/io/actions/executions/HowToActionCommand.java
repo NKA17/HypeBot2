@@ -87,7 +87,7 @@ public class HowToActionCommand extends Command {
 
 
         }else{
-            sendResponse("***Use This!***",
+            sendResponse("***Use This!***"+
                             "\n```\n" +
                                     App.BOT_NAME + ", create "+thing+" \n" +
                                     "name = \"Name\" \n" +

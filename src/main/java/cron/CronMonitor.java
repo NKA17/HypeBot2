@@ -1,6 +1,8 @@
 package cron;
 
+import global.App;
 import global.DateUtils;
+import hypebot.HypeBotContext;
 
 import java.sql.Time;
 import java.util.ArrayList;
@@ -30,10 +32,12 @@ public class CronMonitor implements Runnable {
         while (isLocked());
         lock();
         CronJob rem = null;
-        for(CronJob cj : jobs){
-            if(cj.getName().equalsIgnoreCase(name)) {
-                rem = cj;
-                break;
+        for(HypeBotContext hbc: App.HYPEBOT.getContextsAsArrayList()) {
+            for (CronJob cj : hbc.getJobs()) {
+                if (cj.getName().equalsIgnoreCase(name)) {
+                    rem = cj;
+                    break;
+                }
             }
         }
 
@@ -65,11 +69,13 @@ public class CronMonitor implements Runnable {
         while(true) {
             while(lock);
             lock();
-            for (CronJob cj : jobs) {
-                if (cj.trigger()) {
-                    cj.action();
-                }
+            for(HypeBotContext hbc: App.HYPEBOT.getContextsAsArrayList()) {
+                for (CronJob cj : hbc.getJobs()) {
+                    if (cj.trigger()) {
+                        cj.action();
+                    }
 
+                }
             }
             unlock();
 

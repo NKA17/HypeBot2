@@ -11,6 +11,7 @@ public enum Attributes {
     EXECUTE, //Action edits local runtime variables
     ALIAS, //Replaces text in SEND action responses
     MEME, //Dedicated for sending captioned images
+    PERFORM, //Executes actions in response to message
     ACTION, //All actions have this
     ;
 }
