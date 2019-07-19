@@ -14,8 +14,18 @@ public class HypeBotContext {
 
     private ArrayList<AbstractMessageReceivedAction> commands = new ArrayList<>();
     private ArrayList<AbstractMessageReceivedAction> actions = new ArrayList<>();
+    private ArrayList<AbstractMessageReceivedAction> botjobs = new ArrayList<>();
     private ArrayList<CronJob> jobs = new ArrayList<>();
     private ArrayList<Alias> aliases = new ArrayList<>();
+
+
+    public ArrayList<AbstractMessageReceivedAction> getBotjobs() {
+        return botjobs;
+    }
+
+    public void setBotjobs(ArrayList<AbstractMessageReceivedAction> botjobs) {
+        this.botjobs = botjobs;
+    }
 
     public ArrayList<AbstractMessageReceivedAction> getCommands() {
         return commands;
@@ -53,12 +63,13 @@ public class HypeBotContext {
         ArrayList<AbstractMessageReceivedAction> valid = run(event,commands,true);
 
         if(valid.size()>0){
-            execute(valid);
+            execute(event,valid);
             return true;
         }else {
             return false;
         }
     }
+
 
     public Alias getAlias(String name,Attributes... atts){
         for(Alias ar: getAliases()){
@@ -91,17 +102,32 @@ public class HypeBotContext {
     public boolean runActions(GuildMessageReceivedEvent event){
         ArrayList<AbstractMessageReceivedAction> valid = run(event,actions,false);
         if(valid.size()>0){
-            execute(valid);
+            execute(event,valid);
             return true;
         }else{
             return false;
         }
     }
 
-    private void execute(ArrayList<AbstractMessageReceivedAction> list){
+    private AbstractMessageReceivedAction chooseAction(ArrayList<AbstractMessageReceivedAction> list){
         Random rand = new Random();
-        AbstractMessageReceivedAction ar = list.get(rand.nextInt(list.size()));
+        while (list.size()>0){
+            AbstractMessageReceivedAction ar = list.get(rand.nextInt(list.size()));
+            if(ar.happens())
+                return ar;
+            else
+                list.remove(ar);
+        }
+        return null;
+    }
+    private void execute(GuildMessageReceivedEvent event,ArrayList<AbstractMessageReceivedAction> list){
+        AbstractMessageReceivedAction ar = chooseAction(list);
 
+        if(ar==null)
+            return;
+
+        ar.setEvent(event);
+        ar.setContent(Utilities.consolidateQuotes(event.getMessage().getContentRaw()));
         if(!ar.prebuild())return;
         if(!ar.build())return;
         if(!ar.execute())return;
@@ -123,5 +149,23 @@ public class HypeBotContext {
         }
 
         return ret;
+    }
+
+    public CronJob getJob(String name){
+        for(CronJob cj: jobs){
+            if(cj.getName().equalsIgnoreCase(name)){
+                return cj;
+            }
+        }
+        return null;
+    }
+
+    public AbstractMessageReceivedAction getBotJob(String name){
+        for(AbstractMessageReceivedAction cj: botjobs){
+            if(cj.getBody().getName().equalsIgnoreCase(name)){
+                return cj;
+            }
+        }
+        return null;
     }
 }

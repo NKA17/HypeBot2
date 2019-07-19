@@ -21,11 +21,11 @@ public class ShowBodiesCommand extends Command {
         getBody().setDescription("*"+App.BOT_NAME+", show <custom|built-in|all> <memes|actions|aliases|responses>*" +
                 "\nShows actions.");
         getBody().getIn().add("(show|list|display|tell).*?(?<filter>all|custom|built-in|builtin|built in)" +
-                ".*?(?<type>command|alias|response|action|meme)");
+                ".*?(?<type>command|alias|response|action|meme|job|reminder)");
         getBody().getIn().add("(show|list|display|tell)" +
-                ".*?(?<type>command|alias|response|action|meme).*?(?<filter>all|custom|built-in|builtin|built in)");
+                ".*?(?<type>command|alias|response|action|meme|job|reminder).*?(?<filter>all|custom|built-in|builtin|built in)");
         getBody().getIn().add("(show|list|display|tell)" +
-                ".*?(?<type>command|alias|response|action|meme)");
+                ".*?(?<type>command|alias|response|action|meme|job|reminder)");
     }
     @Override
     public boolean execute(boolean response) {
@@ -79,6 +79,12 @@ public class ShowBodiesCommand extends Command {
             case "command":
                 bodies.addAll(getReturnBodies(getAsBodies(hbc.getCommands()),Attributes.VANILLA));
                 break;
+            case "job":
+                bodies.addAll(getReturnBodies(getAsBodies(hbc.getBotjobs()),att));
+                break;
+            case "reminder":
+                bodies.addAll(getReturnBodies(getAsBodies(hbc.getBotjobs()),att));
+                break;
         }
 
         try{
@@ -120,9 +126,15 @@ public class ShowBodiesCommand extends Command {
                         "*by " + b.getAuthor() + "*\n``` \nDescription = \"" + b.getDescription()+"\n ```"
                         , true);
             }else {
+                String instr = b.getIn().toString();
+                String outstr = b.getOut().toString();
+                if(bodies.size() > 1 && instr.length() > 40)
+                    instr = instr.substring(0,40)+"...";
+                if(bodies.size() > 1 && outstr.length() > 40)
+                    outstr = outstr.substring(0,40)+"...";
                 getEmbed().addField("**"+b.getName()+"**",
                         "*by " + b.getAuthor() + "* \n```\nDescription = \"" + b.getDescription() +
-                                "\"\nIn = " + b.getIn() + "\nOut = " + b.getOut() + "\nLikelihood = " + b.getLikelihood()
+                                "\"\nIn = " + instr + "\nOut = " + outstr + "\nLikelihood = " + b.getLikelihood()
                                 +"\nScope = "+(b.isGlobal()?"GUILD":"CHANNEL")+"\n```", true);
             }
         }

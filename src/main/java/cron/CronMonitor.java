@@ -3,6 +3,7 @@ package cron;
 import global.App;
 import global.DateUtils;
 import hypebot.HypeBotContext;
+import io.actions.AbstractMessageReceivedAction;
 
 import java.sql.Time;
 import java.util.ArrayList;
@@ -70,10 +71,10 @@ public class CronMonitor implements Runnable {
             while(lock);
             lock();
             for(HypeBotContext hbc: App.HYPEBOT.getContextsAsArrayList()) {
-                for (CronJob cj : hbc.getJobs()) {
-                    if (cj.trigger()) {
-                        cj.action();
-                    }
+                for (AbstractMessageReceivedAction cj : hbc.getBotjobs()) {
+                    if(!cj.prebuild())continue;
+                    if(!cj.build())continue;
+                    if(!cj.execute())continue;
 
                 }
             }

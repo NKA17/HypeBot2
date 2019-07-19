@@ -58,11 +58,13 @@ public class MessageSender {
         TextChannel tc = App.findChannel(gid,cid);
         if(tc==null)
             return;
+
+        if(applyAliases) {
+            HypeBotContext hbc = App.HYPEBOT.getContext(getEvent().getGuild().getId());
+            message = MessageUtils.applyAliases(event, message, hbc.getAliases());
+        }
+
         if(!message.matches("http.*")) {
-            if(applyAliases) {
-                HypeBotContext hbc = App.HYPEBOT.getContext(gid);
-                message = MessageUtils.applyAliases(event, message, hbc.getAliases());
-            }
             tc.sendMessage(message).queue();
         }else {
             try {
@@ -76,12 +78,13 @@ public class MessageSender {
         }
     }
     public void sendMessage(String message, boolean applyAliases){
+        if(applyAliases) {
+            HypeBotContext hbc = App.HYPEBOT.getContext(getEvent().getGuild().getId());
+            message = MessageUtils.applyAliases(event, message, hbc.getAliases());
+        }
 
         if(!message.matches("http.*")) {
-            if(applyAliases) {
-                HypeBotContext hbc = App.HYPEBOT.getContext(getEvent().getGuild().getId());
-                message = MessageUtils.applyAliases(event, message, hbc.getAliases());
-            }
+
             event.getChannel().sendMessage(message).queue();
         }else {
             try {

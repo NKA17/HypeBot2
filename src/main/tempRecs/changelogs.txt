@@ -47,3 +47,27 @@
     #bugs
     --Action permissions are passed into commands so people can trigger actions without breaking laws so long as the author of all involved actions is consistent
     @f
+@Beta 1.3.7
+    @s
+    #features
+    --Reminders became jobs.
+    --Cron Jobs can be created, viewed, searched, and deleted.
+    --Cron Jobs execute on days at a certain time. Their execution is similar to the Custom Action
+    --All actions are contained within a HypeBotContext. This ensures they execute only within the scope of their guild
+    @f
+@Beta 1.3.8
+    @s
+    #features
+    --Added responses to Avrae dice rolls
+    --Added HolyRobin quotes alias
+    @f
+@Beta 1.3.9
+    @s
+    #features
+    --Added a pointless API to prompt HypeBot to show images of things
+    --Made MemePainter able to paint images when passed a url in a TextBody
+    --Made Butterfly meme use images sometimes... and then commented it out because its not that great
+    #Bugs
+    --Fixed MemePainter to use Aliases from HypebotContext
+    --Prevent Butterfly meme from triggering on "... what is ..."
+    @f

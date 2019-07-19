@@ -10,7 +10,9 @@ import io.MessageSender;
 import io.actions.AbstractMessageReceivedAction;
 import io.actions.aliases.Alias;
 import io.actions.executions.CheckInCommand;
+import io.actions.executions.IntroduceCommand;
 import io.structure.Body;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -48,116 +50,13 @@ public class MessageEvent extends ListenerAdapter {
 
     public void onGuildJoin(GuildJoinEvent event){
         App.HYPEBOT.createHypeBotContext(event.getGuild().getId());
-        MessageSender ms = new MessageSender();
-        String message = MessageUtils.chooseString(CheckInCommand.getTestResponses());
-        ms.sendMessage(event.getGuild().getId(),event.getGuild().getTextChannels().get(0).getId(),
-                message,true);
+        IntroduceCommand ic = new IntroduceCommand();
+        ic.setEvent(null);
+        ic.build();
+        EmbedBuilder eb = ic.getEmbed();
+        event.getGuild().getTextChannels().get(0).sendMessage(eb.build()).queue();
     }
 
-//        if(event.getAuthor().getId().equalsIgnoreCase(App.BOT_ID))
-//            return;
-//
-////
-////        if(event.getGuild().getId().equalsIgnoreCase("524035064523259924"))
-////            return;
-//        commandIssued = false;
-//
-//        ArrayList<AbstractMessageReceivedAction> all = new ArrayList<>();
-//        for(ArrayList<AbstractMessageReceivedAction> list: allActions){
-//            all.addAll(list);
-//        }
-//
-//        runList(all,event);
-//
-//    }
-
-    public void runList(ArrayList<AbstractMessageReceivedAction> list,GuildMessageReceivedEvent event){
-        ArrayList<AbstractMessageReceivedAction> valid = new ArrayList<>();
-        for(AbstractMessageReceivedAction action: list){
-
-
-            //build action
-            action.setContent(Utilities.consolidateQuotes(event.getMessage().getContentRaw()));
-            action.setEvent(event);
-            action.setState(new HashMap<>());
-            boolean matchSuccess = action.attemptToMatch();
-
-            if(matchSuccess){
-
-                boolean a = action.getBody().getAttributes().contains(Attributes.VANILLA);
-                boolean b = App.TEST_MODE;
-                boolean c = event.getGuild().getId().equalsIgnoreCase(action.getBody().getGuildId());
-                boolean d = action.getBody().isGlobal();
-                boolean e = action.getBody().getChannelId().equalsIgnoreCase(event.getChannel().getId());
-                if(!a) {
-                    if (!b) {
-                        if (!c) {
-                            continue;
-                        } else {
-                            if (!d && !e) {
-                                continue;
-                            }
-                        }
-                    }
-                }
-                valid.add(action);
-                if(action.getBody().getAttributes().contains(Attributes.EXECUTE))
-                    break;
-            }
-        }
-
-        AbstractMessageReceivedAction chosen = chooseEvent(valid);
-        if(chosen==null)
-            return;
-
-        if(!chosen.getBody().getAttributes().contains(Attributes.EXECUTE) && !sendMessages)
-            return;
-
-        //prebuild
-        boolean prebuilt = chosen.prebuild();
-        if(!prebuilt)
-            return;
-
-        //attempt to build
-        chosen.setEmbed(Defaults.getEmbedBuilder());
-        chosen.setEvent(event);
-        chosen.setContent(event.getMessage().getContentRaw());
-        boolean buildSuccess = chosen.build();
-        if (!buildSuccess)
-            return;
-
-        //attempt to execute the action
-        boolean executeSuccess = chosen.execute();
-
-        //reset the action
-        //chosen.purge();
-
-    }
-
-    private void readMessage(GuildMessageReceivedEvent event){
-        readMessage(event,event.getMessage().getContentRaw());
-    }
-    private void readMessage(GuildMessageReceivedEvent event, String content){
-
-    }
-
-    private AbstractMessageReceivedAction getRandom(ArrayList<AbstractMessageReceivedAction> list){
-        Random rand = new Random();
-        return list.get(rand.nextInt(list.size()));
-    }
-
-    private AbstractMessageReceivedAction chooseEvent(ArrayList<AbstractMessageReceivedAction> list){
-        Random rand = new Random();
-        while(list.size() > 0){
-            AbstractMessageReceivedAction ar = getRandom(list);
-            if(ar.happens()){
-                return ar;
-            }else{
-                list.remove(ar);
-            }
-        }
-        return  null;
-    }
 
     public boolean removeSendAction(String name){
         return removeFromList(sendActions,name);

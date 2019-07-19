@@ -13,5 +13,6 @@ public enum Attributes {
     MEME, //Dedicated for sending captioned images
     PERFORM, //Executes actions in response to message
     ACTION, //All actions have this
+    CRON, //For Cron Jobs
     ;
 }

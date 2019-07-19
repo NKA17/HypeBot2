@@ -2,6 +2,7 @@ package hypebot;
 
 import com.google.gson.Gson;
 import cron.CronJob;
+import cron.HypeBotCronJob;
 import cron.WeeklyReminder;
 import enums.Attributes;
 import global.App;
@@ -110,6 +111,9 @@ public class HypeBotStore {
             case MEME:
                 filename = "memes.txt";
                 break;
+            case CRON:
+                filename = "jobs.txt";
+                break;
             default:
                 filename = "errordata.txt";
         }
@@ -126,6 +130,17 @@ public class HypeBotStore {
         }
 
         saveBodies("aliases.txt",toSave);
+    }
+
+    public void saveCronJobs(ArrayList<HypeBotContext> contexts){
+        ArrayList<Body> toSave = new ArrayList<>();
+        for(HypeBotContext hbc: contexts){
+            for(AbstractMessageReceivedAction ar: hbc.getBotjobs()){
+                toSave.add(ar.getBody());
+            }
+        }
+
+        saveBodies("jobs.txt",toSave);
     }
 
     public ArrayList<Body> loadBodies(String filename){
@@ -183,6 +198,17 @@ public class HypeBotStore {
         ArrayList<AbstractMessageReceivedAction> ret = new ArrayList<>();
         for(Body b: bodies){
             BlankAction action = new BlankAction();
+            action.setBody(b);
+            ret.add(action);
+        }
+        return ret;
+    }
+    public  ArrayList<AbstractMessageReceivedAction> loadCronJobs(){
+        ArrayList<Body> bodies = loadBodies("jobs.txt");
+
+        ArrayList<AbstractMessageReceivedAction> ret = new ArrayList<>();
+        for(Body b: bodies){
+            HypeBotCronJob action = new HypeBotCronJob();
             action.setBody(b);
             ret.add(action);
         }

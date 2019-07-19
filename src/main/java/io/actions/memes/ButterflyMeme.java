@@ -1,5 +1,6 @@
 package io.actions.memes;
 
+import apis.SplashImageApi;
 import global.App;
 import io.structure.MemeBody;
 import io.structure.TextBody;
@@ -23,7 +24,16 @@ public class ButterflyMeme extends Meme {
     public boolean prebuild(){
         boolean skip = false;
 
-        skip = skip || getMatcher().group("item").toLowerCase().startsWith("there");
+//        getFirstMeme().getTextBodyByName("item").setText("@item");
+//        String search = getMatcher().group("item");
+//        String[] split = search.split("\\s+");
+//        search = split[split.length-1];
+//        String str = SplashImageApi.getImage(search);
+//        if(str!=null)
+//            getFirstMeme().getTextBodyByName("item").getText().add(str);
+
+        skip = skip || getMatcher().group("item").toLowerCase().startsWith("there")
+            || getContent().toLowerCase().contains("what is");
 
         return !skip;
     }
@@ -41,12 +51,15 @@ public class ButterflyMeme extends Meme {
         TextBody target = new TextBody("target",new Point(350,120));
         target.setFontSize(40);
         target.setText("#auth");
+        target.getText().add("#picauth");
+        target.setMaxImageWidth(200);
         target.setTextBorder(3);
 
         TextBody item = new TextBody("item",new Point(750,100));
         item.setFontSize(40);
         item.setTextBorder(3);
         item.setText("@item");
+        item.setMaxImageWidth(250);
 
         memeBody.getTextBoxes().add(caption);
         memeBody.getTextBoxes().add(target);

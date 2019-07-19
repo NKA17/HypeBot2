@@ -4,11 +4,13 @@ import global.App;
 import io.structure.TextBody;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -157,33 +159,63 @@ public class MemePainter {
     }
 
     public static void drawTextBody(BufferedImage bim, TextBody tb, GuildMessageReceivedEvent event){
+        String wrtiteStr = tb.chooseTextAndApplyAliases(event);
         if(!tb.isCentered()){
-            drawString(
-                    bim,
-                    tb.chooseTextAndApplyAliases(event),
-                    tb.getPoint(),
-                    new Font(tb.getName(),tb.getFontStyle(),tb.getFontSize()),
-                    tb.getTextBorder());
-        }else {
-            if (tb.isElastic())
-                MemePainter.drawCenteredString(
+            if(wrtiteStr.startsWith("http")){
+                drawImage(bim.getGraphics(),wrtiteStr,tb.getPoint(),tb.getMaxImageWidth());
+            }else {
+                drawString(
                         bim,
-                        tb.chooseTextAndApplyAliases(event),
+                        wrtiteStr,
                         tb.getPoint(),
                         new Font(tb.getName(), tb.getFontStyle(), tb.getFontSize()),
                         tb.getTextBorder());
-            else
-                MemePainter.drawCenteredString(
-                        bim.getGraphics(),
-                        tb.chooseTextAndApplyAliases(event),
-                        tb.getPoint(),
-                        new Font(tb.getName(), tb.getFontStyle(), tb.getFontSize()),
-                        tb.getTextBorder());
+            }
+        }else {
+            if(wrtiteStr.startsWith("http")) {
+                drawImage(bim.getGraphics(),wrtiteStr,tb.getPoint(),tb.getMaxImageWidth());
+            }else{
+                if (tb.isElastic()) {
+                    MemePainter.drawCenteredString(
+                            bim,
+                            wrtiteStr,
+                            tb.getPoint(),
+                            new Font(tb.getName(), tb.getFontStyle(), tb.getFontSize()),
+                            tb.getTextBorder());
+                } else {
+                    MemePainter.drawCenteredString(
+                            bim.getGraphics(),
+                            wrtiteStr,
+                            tb.getPoint(),
+                            new Font(tb.getName(), tb.getFontStyle(), tb.getFontSize()),
+                            tb.getTextBorder());
+                }
+            }
         }
     }
 
-    public static void drawImage(Graphics g, BufferedImage image, Point p){
+    public static void drawImage(Graphics g, String url, Point p){
+        drawImage(g,url,p,100);
+    }
+    public static void drawImage(Graphics g, String url, Point p,int maxWidth){
+        try {
+            BufferedImage bimg = ImageIO.read(new URL(url));
+            System.out.println(bimg.getWidth()+", "+bimg.getHeight());
+            drawImage(g,bimg,p,maxWidth);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void drawImage(Graphics g, BufferedImage image, Point p,int maxWidth){
         Graphics2D g2D = (Graphics2D)g;
+        double wscale = image.getWidth() / (maxWidth+0.0);
+        if(wscale>1){
+            wscale = (maxWidth+0.0) / image.getWidth();
+            int wpixel = (int)(wscale * (image.getWidth()+0.0));
+            int hpixel = (int)(wscale * (image.getHeight()+0.0));
+            image = scaleImage(image,wpixel,hpixel);
+        }
         g2D.drawImage(new ImageIcon(image).getImage(),p.x-image.getWidth()/2,p.y-image.getHeight()/2,null);
 
     }
@@ -214,4 +246,5 @@ public class MemePainter {
     public static void setMatcher(Matcher matcher) {
         matcher = matcher;
     }
+
 }

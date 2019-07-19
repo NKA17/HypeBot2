@@ -4,11 +4,13 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -90,6 +92,43 @@ public class Utilities {
         return ret;
     }
 
+    public static JSONObject makeAPIRequest(String urlstr, String auth){
+        try {
+
+            URL url = new URL(urlstr);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Authorization:", auth);
+
+            if (conn.getResponseCode() != 1000 && conn.getResponseCode() != 200) {
+                throw new RuntimeException("Failed : HTTP error code : "
+                        + conn.getResponseCode());
+            }
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+
+            String output;
+            String jsonstr = "";
+            System.out.println("Output from Server .... \n");
+            while ((output = br.readLine()) != null) {
+                jsonstr += output;
+            }
+
+            conn.disconnect();
+            return new JSONObject(jsonstr);
+
+        } catch (MalformedURLException e) {
+
+            e.printStackTrace();
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+        }
+        return new JSONObject();
+    }
     public static String getFromAPI(String add) {
         URL url;
         InputStream is = null;

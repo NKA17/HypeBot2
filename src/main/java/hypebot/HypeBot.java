@@ -8,6 +8,7 @@ import io.actions.AbstractMessageReceivedAction;
 import io.actions.aliases.*;
 import io.actions.executions.*;
 import io.actions.memes.*;
+import io.actions.sends.AvraeDiceRollResponse;
 import io.actions.sends.ChuckNorrisResponse;
 import io.actions.sends.PizzaPartyResponse;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -79,6 +80,11 @@ public class HypeBot {
         hbs.saveItems(getContextsAsArrayList(),Attributes.MEME);
     }
 
+    public void saveCronJobs(){
+        HypeBotStore hbs = new HypeBotStore();
+        hbs.saveCronJobs(getContextsAsArrayList());
+    }
+
     public void saveAliases(){
         HypeBotStore hbs = new HypeBotStore();
         hbs.saveAliases(getContextsAsArrayList());
@@ -92,10 +98,6 @@ public class HypeBot {
         return getContexts().get(event.getGuild().getId());
     }
 
-    public void saveCronJobs(){
-        HypeBotStore hbs = new HypeBotStore();
-        hbs.saveReminders();
-    }
 
     public void loadUserMade(){
         HypeBotStore hbs = new HypeBotStore();
@@ -109,7 +111,7 @@ public class HypeBot {
         ArrayList<Alias> als = hbs.loadAliases();
         distributeAliases(als);
 
-        ArrayList<CronJob> cjs = hbs.loadWeeklyReminders();
+        ArrayList<AbstractMessageReceivedAction> cjs = hbs.loadCronJobs();
         distributeCronJobs(cjs);
     }
 
@@ -140,6 +142,7 @@ public class HypeBot {
         hbc.getCommands().add(new ChangeLogCommand());
         hbc.getCommands().add(new CreateReminderCommand());
         hbc.getCommands().add(new RemoveReminderCommand());
+        hbc.getCommands().add(new ShowImageCommand());
 
 
         hbc.getActions().add(new GrannyMeme());
@@ -153,12 +156,15 @@ public class HypeBot {
 
         hbc.getActions().add((new PizzaPartyResponse()));
         hbc.getActions().add(new ChuckNorrisResponse());
+        hbc.getActions().add(new AvraeDiceRollResponse());
 
         hbc.getAliases().add(new AuthorAlias());
         hbc.getAliases().add(new ChannelAlias());
         hbc.getAliases().add(new GuildAlias());
         hbc.getAliases().add(new OwnerAlias());
         hbc.getAliases().add(new TimestampAlias());
+        hbc.getAliases().add(new HolyRobinAlias());
+        hbc.getAliases().add(new AuthPicUrlAlias());
     }
     public void loadGlobals(){
         for(HypeBotContext hbc: getContextsAsArrayList()){
@@ -193,14 +199,14 @@ public class HypeBot {
 
     }
 
-    private void distributeCronJobs(ArrayList<CronJob> list){
-        for(CronJob ar: list){
-            String guildid = ar.getGuildId();
+    private void distributeCronJobs(ArrayList<AbstractMessageReceivedAction> list){
+        for(AbstractMessageReceivedAction ar: list){
+            String guildid = ar.getBody().getGuildId();
             if(contexts.containsKey(guildid)){
-                contexts.get(guildid).getJobs().add(ar);
+                contexts.get(guildid).getBotjobs().add(ar);
             }else {
                 HypeBotContext hbc = new HypeBotContext();
-                hbc.getJobs().add(ar);
+                hbc.getBotjobs().add(ar);
                 contexts.put(guildid,hbc);
             }
         }

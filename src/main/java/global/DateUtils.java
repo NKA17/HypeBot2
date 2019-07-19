@@ -19,6 +19,14 @@ public class DateUtils {
         return cal.get(Calendar.DAY_OF_WEEK) == day;
     }
 
+    public static int getDay(){
+        Date now = new Date();
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(now);
+        return cal.get(Calendar.DAY_OF_WEEK);
+    }
+
     public static int dayToInt(){
         Date now = new Date();
 

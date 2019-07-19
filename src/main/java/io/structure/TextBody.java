@@ -1,7 +1,9 @@
 package io.structure;
 
+import cron.HypeBotCronJob;
 import global.App;
 import global.MessageUtils;
+import hypebot.HypeBotContext;
 import io.MessageSender;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -19,6 +21,7 @@ public class TextBody {
     private boolean elastic = true;
     private int textBorder;
     private boolean centered = true;
+    private int maxImageWidth = 100;
 
 
     public TextBody(String name, Point p1,String textBody){
@@ -95,15 +98,24 @@ public class TextBody {
         return MessageUtils.chooseString(text);
     }
 
-//    public String chooseTextAndApplyAliases(GuildMessageReceivedEvent event){
+    public int getMaxImageWidth() {
+        return maxImageWidth;
+    }
+
+    public void setMaxImageWidth(int maxImageWidth) {
+        this.maxImageWidth = maxImageWidth;
+    }
+
+    //    public String chooseTextAndApplyAliases(GuildMessageReceivedEvent event){
 //        String mess = MessageUtils.chooseString(text);
 //        mess = MessageUtils.applyAliases(event,mess,App.ALIASES);
 //        return mess;
 //    }
 
     public String chooseTextAndApplyAliases(GuildMessageReceivedEvent event){
+        HypeBotContext hbc = App.HYPEBOT.getContext(event.getGuild().getId());
         String mess = MessageUtils.chooseString(text);
-        mess = MessageUtils.applyAliases(event,mess,App.ALIASES);
+        mess = MessageUtils.applyAliases(event,mess,hbc.getAliases());
         return mess;
     }
 

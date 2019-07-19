@@ -7,9 +7,12 @@ import io.structure.Body;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.json.JSONObject;
 
+import java.sql.Date;
+import java.util.ArrayList;
+
 public class WeeklyReminder extends CronJob {
 
-    private int day = 0;
+    private ArrayList<Integer> days = new ArrayList<>();
     private String time;
     private String message;
     private GuildMessageReceivedEvent event;
@@ -24,12 +27,12 @@ public class WeeklyReminder extends CronJob {
 
     public WeeklyReminder(){}
 
-    public int getDay() {
-        return day;
+    public ArrayList<Integer> getDays() {
+        return days;
     }
 
-    public void setDay(int day) {
-        this.day = day;
+    public void setDays(ArrayList<Integer> day) {
+        this.days = days;
     }
 
     public String getTime() {
@@ -50,7 +53,8 @@ public class WeeklyReminder extends CronJob {
 
     @Override
     public boolean trigger() {
-        return DateUtils.isDay(day) && DateUtils.isTime(""+time,"HHmm");
+        int day = DateUtils.getDay();
+        return days.contains(day) && DateUtils.isTime(""+time,"HHmm");
     }
 
     @Override
@@ -69,7 +73,7 @@ public class WeeklyReminder extends CronJob {
 
     public JSONObject toJSON(){
         JSONObject json = super.toJSON();
-        json.put("day",day);
+        json.put("days",days);
         json.put("time",time);
         json.put("message",message);
         return json;
