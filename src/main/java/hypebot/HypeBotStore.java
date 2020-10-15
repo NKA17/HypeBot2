@@ -105,7 +105,7 @@ public class HypeBotStore {
             case SEND:
                 filename = "responses.txt";
                 break;
-            case ACTION:
+            case PERFORM:
                 filename = "actions.txt";
                 break;
             case MEME:

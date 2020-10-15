@@ -71,3 +71,34 @@
     --Fixed MemePainter to use Aliases from HypebotContext
     --Prevent Butterfly meme from triggering on "... what is ..."
     @f
+@Beta 1.4.0
+    @s
+    #features
+    --Hypebot consumes after reading #bar (Burn After Reading)
+    --Removed the 'end of line' marker in regex for ShowImageCommand
+    --Added GetPicAlias
+    #Bugs
+    --Fixed NoClassDefException from java.utils.Pair<> on raspbian OS
+    --Make CronJobs sync to the minute, every minute.
+    --Colon in 'Authorization:' parameter was considered an illegal character when sent to API service from RaspberryPi, removed the colon.
+    @f
+@Beta 1.4.1
+    @s
+    #features
+    --#bardr makes hypebot delete message, execute request, but not respond
+    #Bugs
+    --#bar is replaced with empty string so it does not appear in responses
+    --unhardcoded 'hypebot' in CheckInCommand regex, used global variable
+    @f
+@Beta 1.4.3
+    @s
+    #features
+    --Show bodies command is pageable now
+    --Can edit scope of bodies
+    --Actions scope is implemented
+    --Can edit the channel id of actions
+    --Can ask Hypebot to display guild info
+    #Bugs
+    --fixed bug where items were undeleteable
+    --fixed bug where all items were saved as actions as well as their actual class
+    @f

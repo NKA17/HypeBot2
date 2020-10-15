@@ -17,7 +17,16 @@ public class HypeBotContext {
     private ArrayList<AbstractMessageReceivedAction> botjobs = new ArrayList<>();
     private ArrayList<CronJob> jobs = new ArrayList<>();
     private ArrayList<Alias> aliases = new ArrayList<>();
+    private ChainMonitor chainMonitor = new ChainMonitor();
 
+
+    public ChainMonitor getChainMonitor() {
+        return chainMonitor;
+    }
+
+    public void setChainMonitor(ChainMonitor chainMonitor) {
+        this.chainMonitor = chainMonitor;
+    }
 
     public ArrayList<AbstractMessageReceivedAction> getBotjobs() {
         return botjobs;
@@ -85,6 +94,9 @@ public class HypeBotContext {
         return null;
     }
 
+    public boolean runChain(GuildMessageReceivedEvent event){
+        return chainMonitor.interact(event);
+    }
     public AbstractMessageReceivedAction getAction(String name, Attributes... atts){
         for(AbstractMessageReceivedAction ar: getActions()){
             if(ar.getBody().getName().equalsIgnoreCase(name)){
@@ -138,6 +150,11 @@ public class HypeBotContext {
         for(AbstractMessageReceivedAction ar: list){
             ar.setEvent(event);
             ar.setContent(Utilities.consolidateQuotes(event.getMessage().getContentRaw()));
+
+
+
+            if(!(ar.getBody().isGlobal() || ar.getBody().getChannelId().equals(event.getChannel().getId())))
+                continue;
 
             if(!ar.attemptToMatch())
                 continue;

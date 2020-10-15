@@ -47,3 +47,8 @@
     #bugs
     --Action permissions are passed into commands so people can trigger actions without breaking laws so long as the author of all involved actions is consistent
     @f
+@Beta 1.4.5
+    @s
+    #features
+    --External Commands from other applications can send messages to channels
+    @f

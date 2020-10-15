@@ -22,7 +22,7 @@ public class CheckInCommand extends Command {
         super();
         getBody().setDescription("*"+ App.BOT_NAME+", check in.*\nA quick prompt to check if "+App.BOT_NAME+" is running.");
         getBody().setName("CheckIn");
-        getBody().getIn().add("check in|you there|(^| )u there|^hypebot(\\?|!)?$");
+        getBody().getIn().add("check in|you there|(^| )u there|^"+App.BOT_NAME+"(\\?|!)?$");
         getBody().setOut(testResponses);
         getBody().setName("CheckInCommand");
     }

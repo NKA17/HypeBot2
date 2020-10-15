@@ -24,7 +24,7 @@ public class CreateReminderCommand extends Command {
         getBody().setName("ReminderCommand");
         //getBody().getIn().add("(create|make|set).*?reminder.*?(?<freq>sun|mon|tues|wed|thur|fri|sat|day)\\w*.*?(?<time>\\d{4})");
         //getBody().getIn().add("(create|make|set).*?reminder.*?(?<time>\\d{4}).*?(?<freq>sun|mon|tues|wed|thur|fri|sat|day)\\w*");
-        getBody().getIn().add("(create|make|set).*?reminder");
+        getBody().getIn().add("(create|make|set).*?reminder[\\s\\S]+?name(\\s*=\\s*)?\"(?<name>[\\s\\S]+?)\"");
     }
 
     private Body body;

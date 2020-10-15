@@ -2,13 +2,18 @@ package io.actions.executions;
 
 import enums.Attributes;
 import global.App;
+import global.Defaults;
 import global.MessageUtils;
 import hypebot.HypeBot;
 import hypebot.HypeBotContext;
+import interfaces.Chainable;
 import io.actions.AbstractMessageReceivedAction;
 import io.actions.aliases.Alias;
+import io.actions.sends.BlankResponse;
 import io.structure.Body;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
+import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,13 +35,14 @@ public class ShowBodiesCommand extends Command {
     @Override
     public boolean execute(boolean response) {
 
-        sendEmbed();
+        //sendEmbed();
 
         return true;
     }
 
     @Override
     public boolean build() {
+        setEmbed(Defaults.getEmbedBuilder());
         String filter = "all";
         Attributes att = Attributes.ACTION;
         try{
@@ -95,8 +101,13 @@ public class ShowBodiesCommand extends Command {
             }
         }catch (Exception e){  }
 
-        if(bodies.size()>0)
-        populateEmbed(type,filter,bodies);
+        if(bodies.size()>0){
+            Chainable chainable = createChainable(type,filter,bodies);
+            if(bodies.size() > 5) {
+                hbc.getChainMonitor().setChain(chainable);
+            }
+            chainable.execute(getEvent());
+        }
         else {
             sendResponse(MessageUtils.chooseString("None on file.", "You don't have any.",
                     "You should make some, first. Then, I can show you what you made.",
@@ -135,9 +146,10 @@ public class ShowBodiesCommand extends Command {
                 getEmbed().addField("**"+b.getName()+"**",
                         "*by " + b.getAuthor() + "* \n```\nDescription = \"" + b.getDescription() +
                                 "\"\nIn = " + instr + "\nOut = " + outstr + "\nLikelihood = " + b.getLikelihood()
-                                +"\nScope = "+(b.isGlobal()?"GUILD":"CHANNEL")+"\n```", true);
+                                +"\nScope = "+(b.isGlobal()?"GUILD":"CHANNEL")+"\n```", false);
             }
         }
+
     }
 
     private ArrayList<Body> getAsBodiesFromAlias(ArrayList<Alias> list){
@@ -168,5 +180,61 @@ public class ShowBodiesCommand extends Command {
                 ret.add(b);
         }
         return ret;
+    }
+
+    private Chainable createChainable(String type, String filter, ArrayList<Body> loaded){
+        Chainable chainable = new Chainable() {
+            private ArrayList<Body> bodies = loaded;
+            int i = 0;
+            int pagesize = 5;
+            String t = type;
+            String f = filter;
+            GuildMessageReceivedEvent event;
+            long mostRecentInteraction = System.currentTimeMillis();
+            @Override
+            public boolean match(String str) {
+                if(str.matches("next|n")){
+                    i = Math.min(i+pagesize,bodies.size()-(bodies.size()%pagesize));
+                    mostRecentInteraction = System.currentTimeMillis();
+                    return true;
+                }
+                if(str.matches("previous|prev|p")){
+                    i = Math.max(0, i-pagesize);
+                    mostRecentInteraction = System.currentTimeMillis();
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean execute(GuildMessageReceivedEvent event) {
+                ArrayList<Body> forpage = new ArrayList<>();
+                setEmbed(Defaults.getEmbedBuilder());
+                for( int j = i; j < i+pagesize && j < bodies.size(); j++){
+                    forpage.add(bodies.get(j));
+                }
+                populateEmbed(t,f,forpage);
+                if(bodies.size() > pagesize)
+                    getEmbed().addField("Page "+((i/pagesize)+1)+" of "+((bodies.size()/pagesize)+1),"*n - next | p - previous*",true);
+                sendEmbed();
+                return false;
+            }
+
+            @Override
+            public boolean expire() {
+                if(System.currentTimeMillis() - mostRecentInteraction > 30000) {
+                    BlankResponse br = new BlankResponse();
+                    br.getBody().setGuildId(getEvent().getGuild().getId());
+                    br.getBody().setChannelId(getEvent().getChannel().getId());
+                    br.getBody().setAuthorId(getEvent().getAuthor().getId());
+                    br.getBody().setOut("*Page listener expired.*");
+                    br.setContent("");
+                    br.execute();
+                    return true;
+                }
+                return false;
+            }
+        };
+        return chainable;
     }
 }

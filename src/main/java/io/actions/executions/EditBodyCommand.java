@@ -1,5 +1,6 @@
 package io.actions.executions;
 
+import cron.HypeBotCronJob;
 import enums.Attributes;
 import global.App;
 import global.MessageUtils;
@@ -22,12 +23,12 @@ public class EditBodyCommand extends Command {
         super();
 
         getBody().setOut(MessageUtils.affirmative);
-        getBody().getIn().add("edit\\s+(?<type>meme|response|alias|action)?\\s*\"(?<name>[\\s\\S]+?)\"\\s+(?<action>add|set|clear)\\s+" +
-                "(?<field>name|in|out|description|desc|likelihood|like)\\s*(\\s*=\\s*)?(?<value>(\\[[\\s\\S]+?])|(\"[\\s\\S]+?[^\\\\]\")|(\\d*\\.\\d+))");
-        getBody().getIn().add("edit\\s+(?<type>meme|response|alias|action)?\\s*\"(?<name>[\\s\\S]+?)\"\\s+(?<action>clear)\\s+" +
-                "(?<field>name|in|out|description|desc|likelihood|like)");
+        getBody().getIn().add("edit\\s+(?<type>reminder|meme|response|alias|action)?\\s*\"(?<name>[\\s\\S]+?)\"\\s+(?<action>add|set|clear)\\s+" +
+                "(?<field>name|in|out|description|desc|likelihood|like|scope|channel)\\s*(\\s*=\\s*)?(?<value>(\\[[\\s\\S]+?])|(\"[\\s\\S]+?[^\\\\]\")|(\\d*\\.\\d+)|(\\w+))");
+        getBody().getIn().add("edit\\s+(?<type>reminder|meme|response|alias|action)?\\s*\"(?<name>[\\s\\S]+?)\"\\s+(?<action>clear)\\s+" +
+                "(?<field>name|in|out|description|desc|likelihood|like|scope|channel)");
         getBody().setName("EditThings");
-        getBody().setDescription("*"+App.BOT_NAME+", edit <meme|action|alias|response>? \"<name>\" <set|add|clear> <field> <value>*\n" +
+        getBody().setDescription("*"+App.BOT_NAME+", edit <reminder|meme|action|alias|response>? \"<name>\" <set|add|clear> <field> <value>*\n" +
                 "Edit existing actions.");
     }
     @Override
@@ -38,10 +39,18 @@ public class EditBodyCommand extends Command {
         App.HYPEBOT.saveResponses();
         App.HYPEBOT.saveActions();
         App.HYPEBOT.saveMemes();
+        App.HYPEBOT.saveCronJobs();
 
         if(response)
             sendResponse();
         return true;
+    }
+
+    public boolean attemptToMatch(){
+        boolean superbool = super.attemptToMatch();
+        if(getContent().matches("(?i)^"+App.BOT_NAME+"(,)? create[\\s\\S]*"))
+            return false;
+        return superbool;
     }
 
     @Override
@@ -84,6 +93,9 @@ public class EditBodyCommand extends Command {
                     case "alias":
                         editBody = hbc.getAlias(name).getBody();
                         break;
+                    case "reminder":
+                        editBody = hbc.getBotJob(name).getBody();
+                        break;
                     default:
                         AbstractMessageReceivedAction ar = hbc.getAction(name);
                         if (ar != null) {
@@ -91,8 +103,16 @@ public class EditBodyCommand extends Command {
                             break;
                         }
                         Alias al = hbc.getAlias(name);
-                        if (al != null)
+                        if (al != null) {
                             editBody = al.getBody();
+                            break;
+                        }
+
+                        AbstractMessageReceivedAction hbcj = hbc.getBotJob(name);
+                        if(hbcj!=null){
+                            editBody = hbcj.getBody();
+                            break;
+                        }
                         break;
                 }
             }catch (Exception e){}
@@ -183,6 +203,12 @@ public class EditBodyCommand extends Command {
                 case "likelihood":
                     body.setLikelihood(value);
                     break;
+                case "scope":
+                    body.setGlobal(value.equalsIgnoreCase("guild"));
+                    break;
+                case "channel":
+                    body.setChannelId(value);
+                    break;
             }
             return worked;
         }catch (Exception e) {
@@ -229,6 +255,12 @@ public class EditBodyCommand extends Command {
                 case "likelihood":
                     body.setLikelihood(value);
                     break;
+                case "scope":
+                    body.setGlobal(value.equalsIgnoreCase("guild"));
+                    break;
+                case "channel":
+                    body.setChannelId(value);
+                    break;
             }
             return worked;
         }catch (Exception e) {
@@ -255,6 +287,9 @@ public class EditBodyCommand extends Command {
                     break;
                 case "likelihood":
                     body.setLikelihood(1.0);
+                    break;
+                case "scope":
+                    body.setGlobal(false);
                     break;
             }
             return worked;

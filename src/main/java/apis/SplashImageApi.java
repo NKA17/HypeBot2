@@ -23,6 +23,7 @@ public class SplashImageApi {
             }
             return null;
         }catch (Exception e){
+            System.out.println(e.getMessage());
             return null;
         }
 

@@ -21,8 +21,7 @@ public class BlankResponse extends AbstractMessageReceivedAction {
     @Override
     public boolean execute() {
         try{
-            MessageSender ms = new MessageSender(getEvent());
-            ms.sendMessage(getBody().getOut());
+            sendResponse();
             return true;
         }catch (Exception e) {
             e.printStackTrace();

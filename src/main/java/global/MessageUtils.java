@@ -25,7 +25,9 @@ public class MessageUtils {
             try {
 
                 str = a.apply(str, event);
-            }catch (Exception e){/*I'd rather it didn't but that's ok for now. //TODO */}
+            }catch (Exception e){/*I'd rather it didn't but that's ok for now. //TODO */
+            //e.printStackTrace();
+            }
         }
 
         return str;

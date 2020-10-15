@@ -16,7 +16,8 @@ public class ButterflyMeme extends Meme {
 
 
         getBody().getIn().add("^is (?<item>.+?) a (?<caption>.+?)(\\s*now\\*)?(!|\\.|,|\\?|$)");
-        getBody().getIn().add("(?<item>.+?) (is|has been|was) a (?<caption>.+?)(\\s*now\\s*)?(,|\\?|!|\\.|$)");
+        getBody().getIn().add("(?<item>.+?) (is|has been|was) (?<caption>a .+?)(\\s*now\\s*)?(,|\\?|!|\\.|$)");
+        getBody().getIn().add("(?<item>(.+? ){1,3})(is|has been|was) (?<caption>.+?)(\\s*now\\s*)?(,|\\?|!|\\.|$)");
 
         populateMeme();
     }
@@ -32,8 +33,10 @@ public class ButterflyMeme extends Meme {
 //        if(str!=null)
 //            getFirstMeme().getTextBodyByName("item").getText().add(str);
 
+        String cont = getContent().toLowerCase();
         skip = skip || getMatcher().group("item").toLowerCase().startsWith("there")
-            || getContent().toLowerCase().contains("what is");
+                || cont.contains("how")
+                ||cont.contains("what is");
 
         return !skip;
     }
@@ -46,7 +49,7 @@ public class ButterflyMeme extends Meme {
         TextBody caption = new TextBody("caption",new Point(500,550));
         caption.setFontSize(40);
         caption.setTextBorder(3);
-        caption.setText("Is this a @caption?");
+        caption.setText("Is this #caption?");
 
         TextBody target = new TextBody("target",new Point(350,120));
         target.setFontSize(40);
@@ -58,7 +61,7 @@ public class ButterflyMeme extends Meme {
         TextBody item = new TextBody("item",new Point(750,100));
         item.setFontSize(40);
         item.setTextBorder(3);
-        item.setText("@item");
+        item.setText("#item");
         item.setMaxImageWidth(250);
 
         memeBody.getTextBoxes().add(caption);

@@ -153,4 +153,8 @@ public class Body {
         }
         setOut(n);
     }
+
+    public String toString(){
+        return getName();
+    }
 }

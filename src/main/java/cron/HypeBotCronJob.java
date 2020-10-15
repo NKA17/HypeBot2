@@ -5,7 +5,6 @@ import global.DateUtils;
 import io.actions.AbstractMessageReceivedAction;
 import io.actions.actions.BlankAction;
 import io.structure.Body;
-import javafx.util.Pair;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import javax.swing.*;
@@ -34,6 +33,7 @@ public class HypeBotCronJob extends AbstractMessageReceivedAction{
         Body bo = new Body();
         bo.setOut(getBody().getOut());
         ba.setEvent(getEvent());
+        bo.setAuthorId(getBody().getAuthorId());
         bo.setGuildId(getBody().getGuildId());
         bo.setChannelId(getBody().getChannelId());
         ba.setBody(bo);
@@ -83,5 +83,21 @@ public class HypeBotCronJob extends AbstractMessageReceivedAction{
         }
 
         return new Pair<>(day,split[1].trim());
+    }
+
+    class Pair<K,V>{
+        private K key;
+        private V val;
+        public Pair(K key, V val){
+            this.key = key;
+            this.val = val;
+        }
+
+        public K getKey(){
+            return key;
+        }
+        public V getValue(){
+            return val;
+        }
     }
 }

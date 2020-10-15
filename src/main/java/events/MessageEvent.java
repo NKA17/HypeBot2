@@ -11,10 +11,14 @@ import io.actions.AbstractMessageReceivedAction;
 import io.actions.aliases.Alias;
 import io.actions.executions.CheckInCommand;
 import io.actions.executions.IntroduceCommand;
+import io.actions.memes.Meme;
+import io.actions.memes.NickNameMeme;
 import io.structure.Body;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.core.events.guild.member.GuildMemberNickChangeEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.json.JSONArray;
 
@@ -41,11 +45,25 @@ public class MessageEvent extends ListenerAdapter {
 
     private boolean commandIssued = false;
 
+    public void onGuildMemberNickChange(GuildMemberNickChangeEvent event){
+        String guildId = event.getGuild().getId();
+        String channelId = App.findPrimaryChannelForGuild(guildId).getId();
 
+        Meme nicknameMeme = new NickNameMeme();
+        nicknameMeme.getBody().setAuthorId(event.getUser().getId());
+        nicknameMeme.getBody().setGuildId(guildId);
+        nicknameMeme.getBody().setChannelId(channelId);
+        nicknameMeme.build();
+        nicknameMeme.execute();
+    }
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event){
-        if(!App.BOT_ID.equalsIgnoreCase(event.getAuthor().getId()))
+        if(!App.BOT_ID.equalsIgnoreCase(event.getAuthor().getId())) {
             App.HYPEBOT.respondToEvent(event);
+            if(event.getMessage().getContentRaw().toLowerCase().matches("[\\s\\S]*?(#bar|#bardr)$")){
+                event.getChannel().purgeMessages(event.getMessage());
+            }
+        }
     }
 
     public void onGuildJoin(GuildJoinEvent event){

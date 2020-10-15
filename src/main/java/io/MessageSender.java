@@ -60,11 +60,11 @@ public class MessageSender {
             return;
 
         if(applyAliases) {
-            HypeBotContext hbc = App.HYPEBOT.getContext(getEvent().getGuild().getId());
+            HypeBotContext hbc = App.HYPEBOT.getContext(gid);
             message = MessageUtils.applyAliases(event, message, hbc.getAliases());
         }
 
-        if(!message.matches("http.*")) {
+        if(!message.matches("http.*") || message.endsWith("gif")) {
             tc.sendMessage(message).queue();
         }else {
             try {
@@ -83,7 +83,7 @@ public class MessageSender {
             message = MessageUtils.applyAliases(event, message, hbc.getAliases());
         }
 
-        if(!message.matches("http.*")) {
+        if(!message.matches("http.*") || message.endsWith("gif")) {
 
             event.getChannel().sendMessage(message).queue();
         }else {

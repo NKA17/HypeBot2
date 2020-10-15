@@ -6,7 +6,7 @@ import io.structure.Body;
 public class HowToActionCommand extends Command {
     public HowToActionCommand(){
         super();
-        getBody().getIn().add("how.*?(create|make|build|customize).*?(?<type>thing|alias|response|action)");
+        getBody().getIn().add("how.*?(create|make|build|customize).*?(?<type>thing|alias|response|action|reminder)");
         getBody().setName("HowToCreateAction");
         getBody().setDescription("Provides a template for creating actions. You can include the word *'detail'* " +
                 "to get an in-depth explanation of all the steps.");

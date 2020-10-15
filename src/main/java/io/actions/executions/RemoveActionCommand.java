@@ -75,13 +75,13 @@ public class RemoveActionCommand extends Command {
                 hbc = App.HYPEBOT.getContext(getEvent());
                 ar = hbc.getAction(name,Attributes.CUSTOM);
                 if(ar!=null) {
-                    worked = true;
+                    worked = hbc.getActions().remove(ar);
                     App.HYPEBOT.saveMemes();
                     App.HYPEBOT.saveActions();
                     App.HYPEBOT.saveResponses();
                 }else{
                     Alias ab = hbc.getAlias(name,Attributes.CUSTOM);
-                    hbc.getAliases().remove(ab);
+                    worked = hbc.getAliases().remove(ab);
                     App.HYPEBOT.saveAliases();
                 }
                 break;

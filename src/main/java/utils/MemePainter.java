@@ -199,7 +199,7 @@ public class MemePainter {
     }
     public static void drawImage(Graphics g, String url, Point p,int maxWidth){
         try {
-            BufferedImage bimg = ImageIO.read(new URL(url));
+            BufferedImage bimg = ImageIO.read(new URL(url).openStream());
             System.out.println(bimg.getWidth()+", "+bimg.getHeight());
             drawImage(g,bimg,p,maxWidth);
         }catch (Exception e){
@@ -209,13 +209,11 @@ public class MemePainter {
 
     public static void drawImage(Graphics g, BufferedImage image, Point p,int maxWidth){
         Graphics2D g2D = (Graphics2D)g;
-        double wscale = image.getWidth() / (maxWidth+0.0);
-        if(wscale>1){
-            wscale = (maxWidth+0.0) / image.getWidth();
+        double wscale = (maxWidth+0.0) / image.getWidth();
             int wpixel = (int)(wscale * (image.getWidth()+0.0));
             int hpixel = (int)(wscale * (image.getHeight()+0.0));
             image = scaleImage(image,wpixel,hpixel);
-        }
+
         g2D.drawImage(new ImageIcon(image).getImage(),p.x-image.getWidth()/2,p.y-image.getHeight()/2,null);
 
     }

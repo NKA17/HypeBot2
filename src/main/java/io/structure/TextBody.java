@@ -5,6 +5,7 @@ import global.App;
 import global.MessageUtils;
 import hypebot.HypeBotContext;
 import io.MessageSender;
+import io.actions.aliases.Alias;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.awt.*;

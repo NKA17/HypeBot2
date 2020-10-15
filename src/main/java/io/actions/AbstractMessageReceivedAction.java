@@ -4,6 +4,8 @@ import enums.Attributes;
 import global.App;
 import global.Defaults;
 import global.MessageUtils;
+import global.Utilities;
+import io.actions.executions.Command;
 import io.structure.Body;
 import io.MessageSender;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -72,8 +74,13 @@ public abstract class AbstractMessageReceivedAction {
      */
     public boolean attemptToMatch(){
         try{
+            String mstring = content;
+            if(this instanceof Command){
+                mstring = mstring.replaceAll("\"[\\s\\S]*?\"","");
+            }
             for(String regex : body.getIn()){
-                Matcher m = Pattern.compile("(?i)"+regex).matcher(content);
+
+                Matcher m = Pattern.compile("(?i)"+regex).matcher(mstring);
                 if(m.find()){
                     matcher = m;
                     return true;
@@ -81,6 +88,7 @@ public abstract class AbstractMessageReceivedAction {
             }
             return false;
         }catch (Exception e){
+            System.out.println("Exception in: "+this.getBody().getName());
             e.printStackTrace();
             return false;
         }
@@ -106,17 +114,27 @@ public abstract class AbstractMessageReceivedAction {
      * @return
      */
     public boolean sendResponse(){
+        if(getContent() != null && getContent().toLowerCase().contains("#bardr")){
+            return false;
+        }
         MessageSender ms = new MessageSender(getEvent());
 
         String choose = MessageUtils.chooseString(getBody().getOut());
 
         choose = applyCaptureAliases(choose);
 
-        ms.sendMessage(choose,true);
+        if(getEvent() == null){
+            ms.sendMessage(getBody().getGuildId(),getBody().getChannelId(),choose,true);
+        }else {
+            ms.sendMessage(choose, true);
+        }
 
         return true;
     }
     public boolean sendResponse(String guildid, String channelid, String str){
+        if(getContent()!=null && getContent().toLowerCase().contains("#bardr")){
+            return false;
+        }
         MessageSender ms = new MessageSender(getEvent());
 
         str = applyCaptureAliases(str);
@@ -125,6 +143,9 @@ public abstract class AbstractMessageReceivedAction {
         return true;
     }
     public boolean sendResponse(String str){
+        if(getContent().toLowerCase().contains("#bardr")){
+            return false;
+        }
         MessageSender ms = new MessageSender(getEvent());
 
         str = applyCaptureAliases(str);
@@ -133,6 +154,11 @@ public abstract class AbstractMessageReceivedAction {
         return true;
     }
     public boolean sendResponse(String... str){
+
+        if(getContent().toLowerCase().contains("#bardr")){
+            return false;
+        }
+
         MessageSender ms = new MessageSender(getEvent());
 
         String choose = MessageUtils.chooseString(str);
@@ -148,7 +174,7 @@ public abstract class AbstractMessageReceivedAction {
             while (reg.find()){
                 String name = reg.group("name");
                 try {
-                    str = str.replaceAll("@" + name, matcher.group(name));
+                    str = str.replaceAll("#" + name, matcher.group(name));
                 }catch (Exception e){
                     // that's ok
                 }
@@ -161,7 +187,22 @@ public abstract class AbstractMessageReceivedAction {
      * Builds and sends the embed
      */
     public boolean sendEmbed(){
+        if(getContent().toLowerCase().contains("#bardr")){
+            return false;
+        }
+        if(getEvent()==null){
+            return sendEmbed(getBody().getGuildId(),getBody().getChannelId());
+        }
         getEvent().getChannel().sendMessage(getEmbed().build()).queue();
+        return true;
+    }
+
+    public boolean sendEmbed(String guildId, String channelId){
+
+        if(getContent().toLowerCase().contains("#bardr")){
+            return false;
+        }
+        App.findChannel(guildId,channelId).sendMessage(getEmbed().build()).queue();
         return true;
     }
 
@@ -240,6 +281,7 @@ public abstract class AbstractMessageReceivedAction {
     public void setRandom(Random random) {
         this.random = random;
     }
+
 
 
     /**

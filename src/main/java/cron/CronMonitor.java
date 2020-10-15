@@ -65,7 +65,6 @@ public class CronMonitor implements Runnable {
     private boolean lock = false;
     @Override
     public  void run() {
-        synchornizeByMinute();
 
         while(true) {
             while(lock);
@@ -80,11 +79,7 @@ public class CronMonitor implements Runnable {
             }
             unlock();
 
-            try {
-                Thread.sleep(60000);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            synchornizeByMinute();
         }
     }
 

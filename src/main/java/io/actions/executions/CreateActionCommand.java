@@ -40,6 +40,7 @@ public class CreateActionCommand extends Command {
         body.getAttributes().add(Attributes.ACTION);
         body.setGuildId(getEvent().getGuild().getId());
         body.setChannelId(getEvent().getChannel().getId());
+        body.setGlobal(global);
 
         try{
             double d = Double.parseDouble(likelihood.trim());
@@ -92,7 +93,7 @@ public class CreateActionCommand extends Command {
                 App.HYPEBOT.saveAliases();
                 break;
             case "action":
-                body.getAttributes().add(Attributes.ACTION);
+                body.getAttributes().add(Attributes.PERFORM);
                 BlankAction ba = new BlankAction();
                 ba.setBody(body);
                 App.HYPEBOT.getContexts().get(id).getActions().add(ba);
@@ -167,7 +168,7 @@ public class CreateActionCommand extends Command {
         }
 
         try{
-            Matcher m = Pattern.compile("(scope)(\\s*=\\s*)?\\s*(\")?(?<scope>guild|channel)(\")?").matcher(getContent());
+            Matcher m = Pattern.compile("(?i)(scope)(\\s*=\\s*)?\\s*(\")?(?<scope>guild|channel)(\")?").matcher(getContent());
             m.find();
             global = m.group("scope").equalsIgnoreCase("guild");
         }catch (Exception e){
@@ -190,21 +191,24 @@ public class CreateActionCommand extends Command {
     }
 
     private void removeType(String type,String name){
+        AbstractMessageReceivedAction ar;
+        HypeBotContext hbc = App.HYPEBOT.getContext(getEvent());
         switch (type.toLowerCase()){
             case "meme":
-                App.messageEvent.removeMemeAction( name);
+                ar = hbc.getAction(name,Attributes.MEME);
+                hbc.getActions().remove(ar);
                 break;
             case "action":
-                App.messageEvent.removeActionAction(name);
+                ar = hbc.getAction(name,Attributes.PERFORM);
+                hbc.getActions().remove(ar);
                 break;
             case "response":
-                App.messageEvent.removeSendAction(name);
+                ar = hbc.getAction(name,Attributes.SEND);
+                hbc.getActions().remove(ar);
                 break;
             case "alias":
-                App.messageEvent.removeAlias(name);
-                break;
-            default:
-                App.messageEvent.getAny(name);
+                Alias as = hbc.getAlias(name);
+                hbc.getAliases().remove(as);
                 break;
         }
     }

@@ -98,7 +98,7 @@ public class Utilities {
             URL url = new URL(urlstr);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
-            conn.setRequestProperty("Authorization:", auth);
+            conn.setRequestProperty("Authorization", auth);
 
             if (conn.getResponseCode() != 1000 && conn.getResponseCode() != 200) {
                 throw new RuntimeException("Failed : HTTP error code : "

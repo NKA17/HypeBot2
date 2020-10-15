@@ -2,6 +2,7 @@ package io.actions.actions;
 
 import enums.Attributes;
 import global.App;
+import hypebot.HypeBotContext;
 import io.actions.AbstractMessageReceivedAction;
 import io.actions.executions.Command;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -38,7 +39,8 @@ public class BlankAction extends AbstractMessageReceivedAction {
 
 
     private boolean execAction(String exec, GuildMessageReceivedEvent event){
-        for(AbstractMessageReceivedAction ar: App.messageEvent.exeActions){
+        HypeBotContext hbc = App.HYPEBOT.getContext(event);
+        for(AbstractMessageReceivedAction ar: hbc.getCommands()){
             ar.setContent(App.BOT_NAME+", "+exec);
             ar.setEvent(event);
             ar.getState().put("tempPermission",getBody().getAuthorId());

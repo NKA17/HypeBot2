@@ -10,6 +10,7 @@ import io.actions.executions.*;
 import io.actions.memes.*;
 import io.actions.sends.AvraeDiceRollResponse;
 import io.actions.sends.ChuckNorrisResponse;
+import io.actions.sends.OffendHypebot;
 import io.actions.sends.PizzaPartyResponse;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -32,6 +33,8 @@ public class HypeBot {
         }
 
         if(hbc.runCommands(event))return;
+
+        if(hbc.runChain(event))return;
 
         hbc.runActions(event);
     }
@@ -72,7 +75,7 @@ public class HypeBot {
 
     public void saveActions(){
         HypeBotStore hbs = new HypeBotStore();
-        hbs.saveItems(getContextsAsArrayList(),Attributes.ACTION);
+        hbs.saveItems(getContextsAsArrayList(),Attributes.PERFORM);
     }
 
     public void saveMemes(){
@@ -126,6 +129,7 @@ public class HypeBot {
     }
 
     public void loadGlobals(HypeBotContext hbc){
+        hbc.getCommands().add(new HypebotSays());
         hbc.getCommands().add(new SilenceCommand());
         hbc.getCommands().add(new SpeakCommand());
         hbc.getCommands().add(new CheckInCommand());
@@ -143,6 +147,7 @@ public class HypeBot {
         hbc.getCommands().add(new CreateReminderCommand());
         hbc.getCommands().add(new RemoveReminderCommand());
         hbc.getCommands().add(new ShowImageCommand());
+        hbc.getCommands().add(new ShowGuildInfoCommand());
 
 
         hbc.getActions().add(new GrannyMeme());
@@ -153,18 +158,26 @@ public class HypeBot {
         hbc.getActions().add(new PizzaPartyMeme());
         hbc.getActions().add(new ButterflyMeme());
         hbc.getActions().add(new IsNotAMeme());
+        hbc.getActions().add(new ScienceBitchMeme());
+        hbc.getActions().add(new SingleWordMeme());
+        hbc.getActions().add(new AllOfChinaMeme());
 
         hbc.getActions().add((new PizzaPartyResponse()));
         hbc.getActions().add(new ChuckNorrisResponse());
         hbc.getActions().add(new AvraeDiceRollResponse());
+        hbc.getActions().add(new OffendHypebot());
 
         hbc.getAliases().add(new AuthorAlias());
+        hbc.getAliases().add(new NickNameAlias());
         hbc.getAliases().add(new ChannelAlias());
         hbc.getAliases().add(new GuildAlias());
         hbc.getAliases().add(new OwnerAlias());
         hbc.getAliases().add(new TimestampAlias());
         hbc.getAliases().add(new HolyRobinAlias());
         hbc.getAliases().add(new AuthPicUrlAlias());
+        hbc.getAliases().add(new GetPicAlias());
+        hbc.getAliases().add(new LoadImageAlias());
+        hbc.getAliases().add(new BurnAfterReadingAlias());
     }
     public void loadGlobals(){
         for(HypeBotContext hbc: getContextsAsArrayList()){

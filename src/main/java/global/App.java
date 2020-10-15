@@ -7,6 +7,8 @@ import cron.CronMonitor;
 import cron.WeeklyReminder;
 import enums.Attributes;
 import events.MessageEvent;
+import external.ExternalCommandHandler;
+import external.ExternalCommandServer;
 import hypebot.HypeBot;
 import io.actions.AbstractMessageReceivedAction;
 import io.actions.actions.BlankAction;
@@ -19,12 +21,11 @@ import io.actions.sends.PizzaPartyResponse;
 import io.structure.Body;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.entities.Game;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.xml.soap.Text;
 import java.awt.*;
 import java.io.File;
 import java.io.PrintWriter;
@@ -34,7 +35,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class App {
-    public static final String VERSION = "Beta 1.3.9";
+    public static final String VERSION = "Beta 1.5.0";
+    public static final int MAX_EMBED_SIZE = 60000;
     public static String BOT_NAME = "HypeBot";
     public static ArrayList<Alias> ALIASES = new ArrayList<>();
     public static final String BOT_ID = "590356017976573960";
@@ -49,7 +51,13 @@ public class App {
     public static boolean TEST_MODE = false;
     public static HypeBot HYPEBOT = new HypeBot();
 
+    //API doc  https://discordapp.com/developers/docs/intro
+    //API url https://discordapp.com/api
     public static void main(String[] args) throws Exception{
+
+        System.setProperty("http.agent", "Chrome");
+
+        System.out.println("\n"+App.BOT_NAME+" v"+App.VERSION);
         String name = getArg("--botname",args);
         if(name==null)
             name = "HypeBot";
@@ -58,6 +66,12 @@ public class App {
         String path = getArg("--path",args);
         if(path==null)
             path = System.getProperty("user.home")+"/"+App.BOT_NAME+"/storage/";
+
+        String token = "NTkwMzU2MDE3OTc2NTczOTYw.XsiSdg.l1HNTaUCwqexchsO-kVooHWmDCo";
+        String tokenFromConfig = getArg("--token",args);
+        if(tokenFromConfig != null){
+            token = tokenFromConfig;
+        }
 
         Path p = Paths.get(path).normalize().toAbsolutePath();
         RESOURCES_PATH = p.toString();
@@ -74,8 +88,14 @@ public class App {
 
 
         System.out.println(String.format("USING:\n\tPath: %s\n\tBotName: %s",RESOURCES_PATH,BOT_NAME));
-        jda = new JDABuilder("NTkwMzU2MDE3OTc2NTczOTYw.XQhJUw.4cwTnNLXz_fZpIVBmHax6BdPu0k").build();
+        jda = new JDABuilder(token).build();
         messageEvent = new MessageEvent();
+
+
+
+        ExternalCommandServer server = new ExternalCommandServer();
+        server.open();
+
 
 //        loadActions();
 //        loadAliases();
@@ -147,6 +167,7 @@ public class App {
             for(TextChannel tc: g.getTextChannels()){
                 System.out.println("\t"+tc.getName()+", "+tc.getId());
             }
+
         }
 
         Thread cronThread = new Thread(CRON_MONITOR);
@@ -315,6 +336,55 @@ public class App {
             if(g.getId().equalsIgnoreCase(guildId)){
                 for(TextChannel tc: g.getTextChannels()){
                     if(tc.getId().equalsIgnoreCase(channelId))
+                        return tc;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static User getUser(String userId){
+        for(Guild g: jda.getGuilds()){
+            for(Member m: g.getMembers()){
+                if(m.getUser().getId().equalsIgnoreCase(userId)){
+                    return m.getUser();
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Guild findGuild(String guildId){
+        for(Guild g: jda.getGuilds()){
+            if(g.getId().equalsIgnoreCase(guildId)){
+                return g;
+            }
+        }
+        return null;
+    }
+
+    public static String getNickNameOnGuild(String guildId, String userId){
+        for(Member m: findGuild(guildId).getMembers()){
+            if(m.getUser().getId().equalsIgnoreCase(userId)){
+                return m.getNickname();
+            }
+        }
+        return null;
+    }
+
+    public static TextChannel findPrimaryChannelForGuild(String guildId){
+        Guild g = findGuild(guildId);
+        if(g != null){
+            return g.getTextChannels().get(0);
+        }
+        return null;
+    }
+
+    public static TextChannel findSubChannel(String guildId, String channelName){
+        for(Guild g: jda.getGuilds()){
+            if(g.getId().equalsIgnoreCase(guildId)){
+                for(TextChannel tc: g.getTextChannels()){
+                    if(tc.getName().equalsIgnoreCase(channelName))
                         return tc;
                 }
             }
