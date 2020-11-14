@@ -2,7 +2,7 @@ package external;
 
 import global.App;
 import global.Defaults;
-import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.api.EmbedBuilder;
 
 public class EmbedCommandHandler implements ExternalCommandHandler{
     @Override

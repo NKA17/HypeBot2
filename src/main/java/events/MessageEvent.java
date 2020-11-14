@@ -17,12 +17,12 @@ import io.actions.memes.NickNameMeme;
 import io.structure.Body;
 import io.structure.MemeBody;
 import io.structure.TextBody;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
-import net.dv8tion.jda.core.events.guild.member.GuildMemberNickChangeEvent;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.events.user.update.UserUpdateNameEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import utils.MemePainter;
 
@@ -52,7 +52,7 @@ public class MessageEvent extends ListenerAdapter {
 
     private boolean commandIssued = false;
 
-    public void onGuildMemberNickChange(GuildMemberNickChangeEvent event){
+    public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event){
         Random rand = new Random();
 
         String guildId = event.getGuild().getId();
@@ -75,8 +75,8 @@ public class MessageEvent extends ListenerAdapter {
                     temp.add(tb.getText().get(i));
                     String str = tb.getText().get(i);
                     str = str.replaceAll("#auth",event.getUser().getName());
-                    str = str.replaceAll("#oldnick",event.getPrevNick());
-                    str = str.replaceAll("#newnick",event.getNewNick());
+                    str = str.replaceAll("#oldnick",event.getOldNickname());
+                    str = str.replaceAll("#newnick",event.getNewNickname());
 
                     if(str.equalsIgnoreCase("#picauth")){
                         MemePainter.drawImage(memeBody.getImage().getGraphics(),

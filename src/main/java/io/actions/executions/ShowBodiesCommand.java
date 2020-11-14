@@ -11,7 +11,7 @@ import io.actions.AbstractMessageReceivedAction;
 import io.actions.aliases.Alias;
 import io.actions.sends.BlankResponse;
 import io.structure.Body;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;

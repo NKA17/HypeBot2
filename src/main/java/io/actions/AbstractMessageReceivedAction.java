@@ -8,8 +8,8 @@ import global.Utilities;
 import io.actions.executions.Command;
 import io.structure.Body;
 import io.MessageSender;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;

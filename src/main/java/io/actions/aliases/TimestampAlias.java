@@ -2,7 +2,7 @@ package io.actions.aliases;
 
 import enums.Attributes;
 import global.Utilities;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.Random;
 

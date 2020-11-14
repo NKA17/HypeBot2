@@ -6,7 +6,7 @@ import global.App;
 import global.Defaults;
 import io.actions.sends.BlankResponse;
 import io.structure.MemeBody;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.imageio.ImageIO;
 import java.io.File;

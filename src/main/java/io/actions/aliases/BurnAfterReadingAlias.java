@@ -2,7 +2,7 @@ package io.actions.aliases;
 
 import enums.Attributes;
 import global.App;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 
 public class BurnAfterReadingAlias extends Alias {

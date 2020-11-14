@@ -4,7 +4,7 @@ import cron.CronJob;
 import cron.CronMonitor;
 import io.actions.AbstractMessageReceivedAction;
 import io.actions.aliases.Alias;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.ArrayList;
 

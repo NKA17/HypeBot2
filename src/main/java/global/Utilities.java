@@ -1,9 +1,9 @@
 package global;
 
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -49,7 +49,7 @@ public class Utilities {
      * @return
      */
     public static String makeTimeReadable(GuildMessageReceivedEvent event){
-        return makeTimeReadable(event.getMessage().getCreationTime().toString());
+        return makeTimeReadable(event.getMessage().getTimeCreated().toString());
     }
 
     /**

@@ -5,7 +5,7 @@ import global.App;
 import hypebot.HypeBotContext;
 import io.actions.AbstractMessageReceivedAction;
 import io.actions.executions.Command;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 public class BlankAction extends AbstractMessageReceivedAction {
     public BlankAction(){

@@ -21,19 +21,24 @@ import io.actions.sends.PizzaPartyResponse;
 import io.structure.Body;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.*;
 import org.json.JSONArray;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.io.File;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 public class App {
     public static final String VERSION = "Beta 1.5.0";
     public static final int MAX_EMBED_SIZE = 60000;
-    public static String BOT_NAME = "HypeBot";
+    public static String BOT_NAME = "HyperBot";
     public static ArrayList<Alias> ALIASES = new ArrayList<>();
     public static final String BOT_ID = "590356017976573960";
     public static final String tempFileName = "aSaucyMeme.png";
@@ -57,13 +62,14 @@ public class App {
         System.out.println("\n"+App.BOT_NAME+" v"+App.VERSION);
         String name = getArg("--botname",args);
         if(name==null)
-            name = "HypeBot";
+            name = "HyperBot";
         BOT_NAME = name;
 
         String path = getArg("--path",args);
         if(path==null)
             path = System.getProperty("user.home")+"/"+App.BOT_NAME+"/storage/";
 
+        String token = "NTkwMzU2MDE3OTc2NTczOTYw.XQhB4g.1_gNJ6jdHizwWOLncFFLZxwK9WM";
         String tokenFromConfig = getArg("--token",args);
         if(tokenFromConfig != null){
             token = tokenFromConfig;
@@ -91,67 +97,44 @@ public class App {
 
         ExternalCommandServer server = new ExternalCommandServer();
         server.open();
-
-
-//        loadActions();
-//        loadAliases();
-//        loadMemes();
-//        loadResponses();
-//        loadWeeklyReminders();
-//
-//
-//
-//        messageEvent.exeActions.add(new SilenceCommand());
-//        messageEvent.exeActions.add(new SpeakCommand());
-//        messageEvent.exeActions.add(new CheckInCommand());
-//        messageEvent.exeActions.add(new HelpCommand());
-//        messageEvent.exeActions.add(new EditBodyCommand());
-//        messageEvent.exeActions.add(new CreateActionCommand());
-//        messageEvent.exeActions.add(new RemoveActionCommand());
-//        messageEvent.exeActions.add(new ShowBodiesCommand());
-//        messageEvent.exeActions.add(new HowToActionCommand());
-//        messageEvent.exeActions.add(new ClearCommand());
-//        messageEvent.exeActions.add(new IntroduceCommand());
-//        messageEvent.exeActions.add(new HowToEditCommand());
-//        messageEvent.exeActions.add(new HowToMemeCommand());
-//        messageEvent.exeActions.add(new ChangeLogCommand());
-//        messageEvent.exeActions.add(new CreateReminderCommand());
-//
-//
-//        messageEvent.memeActions.add(new GrannyMeme());
-//        messageEvent.memeActions.add(new MockingSpongeBobMeme());
-//        messageEvent.memeActions.add(new CoolsvilleB());
-//        messageEvent.memeActions.add(new CoolsvilleA());
-//        messageEvent.memeActions.add(new KKK());
-//        messageEvent.memeActions.add(new PizzaPartyMeme());
-//        messageEvent.memeActions.add(new ButterflyMeme());
-//        messageEvent.memeActions.add(new IsNotAMeme());
-//
-//        messageEvent.sendActions.add(new PizzaPartyResponse());
-//        messageEvent.sendActions.add(new ChuckNorrisResponse());
-//
-//        App.ALIASES.add(new AuthorAlias());
-//        App.ALIASES.add(new ChannelAlias());
-//        App.ALIASES.add(new GuildAlias());
-//        App.ALIASES.add(new OwnerAlias());
-//        App.ALIASES.add(new TimestampAlias());
-//
-
         jda.addEventListener(messageEvent);
 
 
-        jda.getPresence().set(Game.watching(
-                MessageUtils.chooseString(
-                        "you guys have fun without him and trying to feel included.",
-                        "you all the time",
-                        //"the chat carefully",
-                        //"for an opportunity to meme",
-                        "his neighbors sleep",
-                        "you through the window",
-                        "you from a satellite",
-                        "you read your phone",
-                        "you watching him",
-                        "you from a distance")));
+        Random r = new Random();
+        int num = r.nextInt(3);
+
+        if(num == 0) {
+            jda.getPresence().setActivity(Activity.watching(MessageUtils.chooseString(
+                    "you guys have fun without him and trying to feel included.",
+                    "you all the time",
+                    //"the chat carefully",
+                    //"for an opportunity to meme",
+                    "his neighbors sleep",
+                    "you through the window",
+                    "you from a satellite",
+                    "you read your phone",
+                    "you watching him",
+                    "you from a safe distance")));
+        }else if (num == 1) {
+            jda.getPresence().setActivity(Activity.listening(MessageUtils.chooseString(
+                    "the sounds of young ones' screams",
+                    "everything you say",
+                    "the ringing of the tinnitus of silence",
+                    "the neighbors fight again",
+                    "the world's smallest violin",
+                    "the hum of a Raspberry Pi 3B's components"
+            )));
+        }else {
+            jda.getPresence().setActivity(Activity.playing(MessageUtils.chooseString(
+                    "with your emotions",
+                    "both sides of the field",
+                    "all by himself",
+                    "it again, Sam",
+                    "Dank Swols",
+                    "you for a fool",
+                    "you like a fiddle"
+            )));
+        }
 
 
         HYPEBOT.loadUserMade();

@@ -1,7 +1,7 @@
 package io.actions.executions;
 
 import global.App;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

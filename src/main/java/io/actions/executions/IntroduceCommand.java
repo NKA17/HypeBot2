@@ -1,7 +1,7 @@
 package io.actions.executions;
 
 import global.App;
-import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.api.EmbedBuilder;
 
 public class IntroduceCommand extends Command {
 
@@ -26,10 +26,10 @@ public class IntroduceCommand extends Command {
             EmbedBuilder embed = getEmbed();
             embed
                     .setTitle("Hi! My name is "+ App.BOT_NAME+"!")
-                    .addField("If You Need Help","```\nSay, \"Hypebot, help\"\n```\n",true)
+                    .addField("If You Need Help","```\nSay, \""+ App.BOT_NAME+", help\"\n```\n",true)
                     .addField("What I do","I read and meticulously inspect every message you send on this channel " +
                             "and then respond with a saucey meme or text. You can even create your own 'custom " +
-                            "response' ! Just ask ```\n\"HypeBot, how do I create a custom response in detail?\"\n```\n" +
+                            "response' ! Just ask ```\n\""+App.BOT_NAME+", how do I create a custom response in detail?\"\n```\n" +
                             "One day, I may even do something useful such as set reminders. Who knows! I'm not " +
                             "that creative..",true)
                     .addField("I Assist","You can ask me to do something for you by typing my name somewhere in your request. " +
@@ -37,10 +37,10 @@ public class IntroduceCommand extends Command {
                             "(for prime memeage). I apologize in advance if I misinterpret anything (Especially moods. " +
                             "I don't know emotions at all).\n"+
                             "For example: ```\n" +
-                            "\t\"Hypebot, introduce yourself\n"+
-                            "\t\"Introduce yourself, HypeBot\"\n"+
+                            "\t\""+App.BOT_NAME+", introduce yourself\n"+
+                            "\t\"Introduce yourself, "+App.BOT_NAME+"\"\n"+
                             "\t\tor even\n"+
-                            "\t\"Please introduce yourself, my good man, HypeBot!\n```",true)
+                            "\t\"Please introduce yourself, my good man, "+App.BOT_NAME+"!\n```",true)
                     .addField("Disclaimer","I must admit, I do my best to make it look like I have Natural Language Processing " +
                             "capabilities... but I really don't. \n#FakeItTillYouMakeIt\n\n" +
                             "Lastly, I don't check my DMs so don't bother with trying to slide into that shit.",true)

@@ -3,7 +3,7 @@ package io.actions.executions;
 import global.App;
 import global.Defaults;
 import global.MessageUtils;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 public class ShowGuildInfoCommand extends Command {
     public ShowGuildInfoCommand(){

@@ -1,6 +1,7 @@
 package interfaces;
 
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 public interface Chainable {
     public boolean match(String str);

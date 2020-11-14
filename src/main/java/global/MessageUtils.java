@@ -2,7 +2,7 @@ package global;
 
 import global.Utilities;
 import io.actions.aliases.Alias;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.ArrayList;
 import java.util.Random;

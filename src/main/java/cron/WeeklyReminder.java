@@ -4,7 +4,7 @@ import global.DateUtils;
 import io.MessageSender;
 import io.actions.actions.BlankAction;
 import io.structure.Body;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.json.JSONObject;
 
 import java.sql.Date;

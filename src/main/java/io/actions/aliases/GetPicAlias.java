@@ -3,7 +3,7 @@ package io.actions.aliases;
 import apis.SplashImageApi;
 import enums.Attributes;
 import global.App;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.Random;
 import java.util.regex.Matcher;

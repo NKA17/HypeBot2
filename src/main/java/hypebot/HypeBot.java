@@ -12,7 +12,7 @@ import io.actions.sends.AvraeDiceRollResponse;
 import io.actions.sends.ChuckNorrisResponse;
 import io.actions.sends.OffendHypebot;
 import io.actions.sends.PizzaPartyResponse;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
