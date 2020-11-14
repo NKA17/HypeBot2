@@ -19,13 +19,9 @@ import io.actions.sends.BlankResponse;
 import io.actions.sends.ChuckNorrisResponse;
 import io.actions.sends.PizzaPartyResponse;
 import io.structure.Body;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
 import org.json.JSONArray;
-import org.json.JSONObject;
-
-import javax.xml.soap.Text;
 import java.awt.*;
 import java.io.File;
 import java.io.PrintWriter;
@@ -53,6 +49,7 @@ public class App {
 
     //API doc  https://discordapp.com/developers/docs/intro
     //API url https://discordapp.com/api
+    //add bot go here https://discord.com/developers/applications/590356017976573960/oauth2   and set scope and permissions, copy url
     public static void main(String[] args) throws Exception{
 
         System.setProperty("http.agent", "Chrome");
@@ -67,7 +64,6 @@ public class App {
         if(path==null)
             path = System.getProperty("user.home")+"/"+App.BOT_NAME+"/storage/";
 
-        String token = "NTkwMzU2MDE3OTc2NTczOTYw.XsiSdg.l1HNTaUCwqexchsO-kVooHWmDCo";
         String tokenFromConfig = getArg("--token",args);
         if(tokenFromConfig != null){
             token = tokenFromConfig;
@@ -88,7 +84,7 @@ public class App {
 
 
         System.out.println(String.format("USING:\n\tPath: %s\n\tBotName: %s",RESOURCES_PATH,BOT_NAME));
-        jda = new JDABuilder(token).build();
+        jda = JDABuilder.createDefault(token).build();
         messageEvent = new MessageEvent();
 
 
@@ -144,7 +140,7 @@ public class App {
         jda.addEventListener(messageEvent);
 
 
-        jda.getPresence().setGame(Game.watching(
+        jda.getPresence().set(Game.watching(
                 MessageUtils.chooseString(
                         "you guys have fun without him and trying to feel included.",
                         "you all the time",
@@ -328,6 +324,15 @@ public class App {
                 return args[i+1];
         }
 
+        return null;
+    }
+
+    public static Guild findGuid(String guildId){
+        for(Guild g: jda.getGuilds()){
+            if(g.getId().equalsIgnoreCase(guildId)){
+                return g;
+            }
+        }
         return null;
     }
 

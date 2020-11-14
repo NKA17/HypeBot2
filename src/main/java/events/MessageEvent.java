@@ -9,11 +9,14 @@ import global.Utilities;
 import io.MessageSender;
 import io.actions.AbstractMessageReceivedAction;
 import io.actions.aliases.Alias;
+import io.actions.aliases.NickNameAlias;
 import io.actions.executions.CheckInCommand;
 import io.actions.executions.IntroduceCommand;
 import io.actions.memes.Meme;
 import io.actions.memes.NickNameMeme;
 import io.structure.Body;
+import io.structure.MemeBody;
+import io.structure.TextBody;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberNickChangeEvent;
@@ -21,7 +24,11 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.json.JSONArray;
+import utils.MemePainter;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +53,8 @@ public class MessageEvent extends ListenerAdapter {
     private boolean commandIssued = false;
 
     public void onGuildMemberNickChange(GuildMemberNickChangeEvent event){
+        Random rand = new Random();
+
         String guildId = event.getGuild().getId();
         String channelId = App.findPrimaryChannelForGuild(guildId).getId();
 
@@ -53,8 +62,50 @@ public class MessageEvent extends ListenerAdapter {
         nicknameMeme.getBody().setAuthorId(event.getUser().getId());
         nicknameMeme.getBody().setGuildId(guildId);
         nicknameMeme.getBody().setChannelId(channelId);
-        nicknameMeme.build();
-        nicknameMeme.execute();
+
+        try {
+            //build
+            MemeBody memeBody = nicknameMeme.getMemes().get(rand.nextInt(nicknameMeme.getMemes().size()));
+            memeBody.build();
+            memeBody.openImage();
+            MemePainter.setMatcher(nicknameMeme.getMatcher());
+            for(TextBody tb: memeBody.getTextBoxes()){
+                ArrayList<String> temp = new ArrayList<>();
+                for(int i = 0; i < tb.getText().size(); i++){
+                    temp.add(tb.getText().get(i));
+                    String str = tb.getText().get(i);
+                    str = str.replaceAll("#auth",event.getUser().getName());
+                    str = str.replaceAll("#oldnick",event.getPrevNick());
+                    str = str.replaceAll("#newnick",event.getNewNick());
+
+                    if(str.equalsIgnoreCase("#picauth")){
+                        MemePainter.drawImage(memeBody.getImage().getGraphics(),
+                                event.getUser().getAvatarUrl(),
+                                tb.getPoint());
+                        tb.getText().set(i,"");
+                    }else {
+                        tb.getText().set(i, str);
+                    }
+                }
+                MemePainter.drawTextBody(memeBody.getImage(),tb);
+                tb.setText(temp);
+            }
+
+            //execute
+            File outputfile = new File(App.RESOURCES_PATH + App.tempFileName);
+            ImageIO.write(
+                    memeBody.getImage(),
+                    "png", outputfile);
+
+//            File temp = new File(App.RESOURCES_PATH+App.tempFileName);
+//            String str = temp.toURI().toURL().toString();
+//            getEmbed().setImage(temp.toURI().toURL().toString());
+//            getEvent().getChannel().sendMessage(getEmbed().build()).queue();
+//
+            App.findPrimaryChannelForGuild(guildId).sendFile(outputfile, App.tempFileName).queue();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event){

@@ -157,7 +157,7 @@ public class HypeBotStore {
             s.close();
             return bodies;
         }catch (Exception e){
-            e.printStackTrace();
+            System.out.println("\tERROR: No such file '"+filename+"'");
             return new ArrayList<Body>();
         }
     }
